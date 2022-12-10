@@ -1,0 +1,8 @@
+["RunMode": "Worker"] 
+# Debug = Run with debug and diagnostics window
+# Worker = Run as a worker service
+# App = Run as an application
+# TrayApp = Run as an application in the system tray (Windows only)
+
+click "left" at Vector2(50, 50) for Seconds(1)
+
