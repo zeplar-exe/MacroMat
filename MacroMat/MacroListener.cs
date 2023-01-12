@@ -8,8 +8,8 @@ namespace MacroMat;
 
 public sealed class MacroListener : IDisposable
 {
-    private IKeyboardHook? KeyboardHook { get; }
-    private MessageLoop? MessageLoop { get; }
+    internal IKeyboardHook? KeyboardHook { get; }
+    internal MessageLoop? MessageLoop { get; }
 
     public MacroListener()
     {

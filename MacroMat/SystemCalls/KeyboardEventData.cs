@@ -23,7 +23,7 @@ public class KeyboardEventData
     {
         return new StringBuilder()
             .Append("{ ")
-            .Append("Hardware Code:").Append(HardwareScancode).Append(", ")
+            .Append("Hardware Code: ").Append(HardwareScancode).Append(", ")
             .Append("Virtual Code: ").Append(VirtualCode).Append(", ")
             .Append("Type: ").Append(Type).Append(", ")
             .Append("Is Injection: ").Append(IsInjected)

@@ -62,8 +62,10 @@ public class WindowsLoop : MessageLoop
     }
     
     private Thread? Thread { get; set; }
+    
+    public override IntPtr Handle => IntPtr.Zero;
 
-    public WindowsLoop(Action initialAction) : base(initialAction)
+    public WindowsLoop(Action? initialAction) : base(initialAction)
     {
         
     }
@@ -78,13 +80,16 @@ public class WindowsLoop : MessageLoop
             
             try
             {
-                InitialAction.Invoke();
+                InitialAction?.Invoke();
 
-                timerId = SetTimer(IntPtr.Zero, IntPtr.Zero, 100, IntPtr.Zero);
+                timerId = SetTimer(Handle, IntPtr.Zero, 100, IntPtr.Zero);
 
                 while (IsRunning)
                 {
-                    var result = GetMessage(out var message, IntPtr.Zero, 0, 0);
+                    if (RequestedActions.TryDequeue(out var requested))
+                        requested.Invoke();
+                    
+                    var result = GetMessage(out var message, Handle, 0, 0);
 
                     if (result <= 0)
                     {
@@ -104,7 +109,7 @@ public class WindowsLoop : MessageLoop
             finally
             {
                 if (timerId != null)
-                    KillTimer(IntPtr.Zero, timerId.Value);
+                    KillTimer(Handle, timerId.Value);
             }
         });
         
