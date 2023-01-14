@@ -4,7 +4,5 @@
 public enum KeyInputType
 {
     KeyDown,
-    SysKeyDown,
     KeyUp,
-    SysKeyUp
 }

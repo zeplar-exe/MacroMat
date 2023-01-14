@@ -7,16 +7,18 @@ using MacroMat.SystemCalls.Windows;
 
 namespace MacroMat;
 
-public sealed class MacroListener : IDisposable
+internal class MacroListener : IDisposable
 {
     private MessageReporter Reporter { get; }
-    
+    private List<KeyboardHookCallback> Callbacks { get; }
+
     internal IKeyboardHook? KeyboardHook { get; }
     internal MessageLoop? MessageLoop { get; }
 
     public MacroListener(MessageReporter reporter)
     {
         Reporter = reporter;
+        Callbacks = new List<KeyboardHookCallback>();
         KeyboardHook = GetKeyboardHook();
         
         MessageLoop = GetMessageLoop(() =>
@@ -35,6 +37,16 @@ public sealed class MacroListener : IDisposable
         {
             Reporter.Error("Failed to initialize MessageLoop, no events will be fired..");
         }
+    }
+
+    public void AddCallback(KeyboardHookCallback callback)
+    {
+        Callbacks.Add(callback);
+    }
+
+    public bool RemoveCallback(KeyboardHookCallback callback)
+    {
+        return Callbacks.Remove(callback);
     }
 
     public void Start()
@@ -58,11 +70,15 @@ public sealed class MacroListener : IDisposable
 
     private void OnKey(IKeyboardHook hook, KeyboardEventData data)
     {
-        Reporter.Log(data.ToString());
+        foreach (var callback in Callbacks)
+        {
+            callback.Invoke(hook, data);
+        }
     }
 
     public void Dispose()
     {
+        Callbacks.Clear();
         MessageLoop?.Stop();
         KeyboardHook?.Dispose();
     }

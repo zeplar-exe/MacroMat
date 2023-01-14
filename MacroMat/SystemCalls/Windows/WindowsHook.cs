@@ -77,15 +77,13 @@ internal class WindowsHook : IKeyboardHook
             var keyboardState = args.KeyboardState;
             const int injectedBit = 4;
 
-            var flags = new BitArray(keyboardData.Flags);
-            var isInjected = flags.Count != 0 && flags.Get(injectedBit - 1);
+            var flags = new BitArray(new[] { keyboardData.Flags });
+            var isInjected = flags.Count > injectedBit && flags.Get(injectedBit);
 
             var inputType = keyboardState switch
             {
-                WindowsKeyboardState.KeyDown => KeyInputType.KeyDown,
-                WindowsKeyboardState.KeyUp => KeyInputType.KeyUp,
-                WindowsKeyboardState.SysKeyDown => KeyInputType.SysKeyDown,
-                WindowsKeyboardState.SysKeyUp => KeyInputType.SysKeyUp,
+                WindowsKeyboardState.KeyDown or WindowsKeyboardState.SysKeyUp => KeyInputType.KeyDown,
+                WindowsKeyboardState.KeyUp or WindowsKeyboardState.KeyDown => KeyInputType.KeyUp,
                 _ => throw new ArgumentOutOfRangeException()
             };
             
