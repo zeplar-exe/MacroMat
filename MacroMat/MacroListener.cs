@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 
+using MacroMat.Common;
 using MacroMat.Input;
 using MacroMat.SystemCalls;
 using MacroMat.SystemCalls.Windows;
@@ -8,29 +9,31 @@ namespace MacroMat;
 
 public sealed class MacroListener : IDisposable
 {
+    private MessageReporter Reporter { get; }
+    
     internal IKeyboardHook? KeyboardHook { get; }
     internal MessageLoop? MessageLoop { get; }
 
-    public MacroListener()
+    public MacroListener(MessageReporter reporter)
     {
+        Reporter = reporter;
         KeyboardHook = GetKeyboardHook();
         
         MessageLoop = GetMessageLoop(() =>
         {
-            if (KeyboardHook != null)
+            if (KeyboardHook?.MessageLoopInit() ?? false)
             {
-                KeyboardHook.MessageLoopInit();
                 KeyboardHook.OnKeyEvent += OnKey;
             }
             else
             {
-                Console.WriteLine("Failed to initialize KeyboardHook, key events will not be fired.");
+                Reporter.Error("Failed to initialize KeyboardHook, key events will not be fired.");
             }
         });
 
         if (MessageLoop == null)
         {
-            Console.WriteLine("Failed to initialize MessageLoop, no events will be fired..");
+            Reporter.Error("Failed to initialize MessageLoop, no events will be fired..");
         }
     }
 
@@ -41,58 +44,26 @@ public sealed class MacroListener : IDisposable
 
     private static MessageLoop? GetMessageLoop(Action initialAction)
     {
-        switch (Environment.OSVersion.Platform)
-        {
-            case PlatformID.Win32NT:
-            {
-                return new WindowsLoop(initialAction);
-            }
-            case PlatformID.Unix:
-            {
-                return null;
-            }
-            case PlatformID.MacOSX:
-            {
-                return null;
-            }
-            default:
-            {
-                return null;
-            }
-        }
+        return new OsSelector<MessageLoop>()
+            .OnWindows(() => new WindowsLoop(initialAction))
+            .Execute();
     }
 
-    private static IKeyboardHook? GetKeyboardHook()
+    private IKeyboardHook? GetKeyboardHook()
     {
-        switch (Environment.OSVersion.Platform)
-        {
-            case PlatformID.Win32NT:
-            {
-                return new WindowsHook();
-            }
-            case PlatformID.Unix:
-            {
-                return null;
-            }
-            case PlatformID.MacOSX:
-            {
-                return null;
-            }
-            default:
-            {
-                return null;
-            }
-        }
+        return new OsSelector<IKeyboardHook>()
+            .OnWindows(() => new WindowsHook(Reporter))
+            .Execute();
     }
 
     private void OnKey(IKeyboardHook hook, KeyboardEventData data)
     {
-        Console.WriteLine(data);
+        Reporter.Log(data.ToString());
     }
 
     public void Dispose()
     {
-        MessageLoop.Stop();
+        MessageLoop?.Stop();
         KeyboardHook?.Dispose();
     }
 }

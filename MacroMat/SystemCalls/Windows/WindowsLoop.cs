@@ -2,65 +2,8 @@
 
 namespace MacroMat.SystemCalls.Windows;
 
-public class WindowsLoop : MessageLoop
+internal class WindowsLoop : MessageLoop
 {
-    [DllImport("user32.dll")]
-    private static extern int GetMessage(out MSG lpMsg, IntPtr hWnd, uint wMsgFilterMin,
-        uint wMsgFilterMax);
-    
-    [DllImport("user32.dll", ExactSpelling=true)]
-    public static extern IntPtr SetTimer(IntPtr hWnd, IntPtr nIdEvent, uint uElapse, IntPtr lpTimerFunc);
-    
-    [DllImport("user32.dll", ExactSpelling=true)]
-    [return: MarshalAs(UnmanagedType.Bool)]
-    public static extern bool KillTimer(IntPtr hWnd, IntPtr uIdEvent);
-    
-    [DllImport("user32.dll")]
-    private static extern bool TranslateMessage([In] ref MSG lpMsg);
-    
-    [DllImport("user32.dll")]
-    private static extern IntPtr DispatchMessage([In] ref MSG lpmsg);
-    
-    [StructLayout(LayoutKind.Sequential)]
-    public struct MSG
-    {
-        IntPtr hwnd;
-        uint message;
-        UIntPtr wParam;
-        IntPtr lParam;
-        int time;
-        POINT pt;
-        int lPrivate;
-    }
-
-    [StructLayout(LayoutKind.Sequential)]
-    public struct POINT
-    {
-        public int X;
-        public int Y;
-
-        public POINT(int x, int y)
-        {
-            X = x;
-            Y = y;
-        }
-
-        public static implicit operator System.Drawing.Point(POINT p)
-        {
-            return new System.Drawing.Point(p.X, p.Y);
-        }
-
-        public static implicit operator POINT(System.Drawing.Point p)
-        {
-            return new POINT(p.X, p.Y);
-        }
-
-        public override string ToString()
-        {
-            return $"X: {X}, Y: {Y}";
-        }
-    }
-    
     private Thread? Thread { get; set; }
     
     public override IntPtr Handle => IntPtr.Zero;
@@ -82,14 +25,14 @@ public class WindowsLoop : MessageLoop
             {
                 InitialAction?.Invoke();
 
-                timerId = SetTimer(Handle, IntPtr.Zero, 100, IntPtr.Zero);
+                timerId = Win32.SetTimer(Handle, IntPtr.Zero, 100, IntPtr.Zero);
 
                 while (IsRunning)
                 {
                     if (RequestedActions.TryDequeue(out var requested))
                         requested.Invoke();
                     
-                    var result = GetMessage(out var message, Handle, 0, 0);
+                    var result = Win32.GetMessage(out var message, Handle, 0, 0);
 
                     if (result <= 0)
                     {
@@ -98,8 +41,8 @@ public class WindowsLoop : MessageLoop
                         continue;
                     }
 
-                    TranslateMessage(ref message);
-                    DispatchMessage(ref message);
+                    Win32.TranslateMessage(ref message);
+                    Win32.DispatchMessage(ref message);
                 }
             }
             catch (Exception e)
@@ -109,7 +52,7 @@ public class WindowsLoop : MessageLoop
             finally
             {
                 if (timerId != null)
-                    KillTimer(Handle, timerId.Value);
+                    Win32.KillTimer(Handle, timerId.Value);
             }
         });
         

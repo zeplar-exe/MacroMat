@@ -1,6 +1,6 @@
 ﻿namespace MacroMat.SystemCalls.Windows;
 
-public enum KeyboardState
+internal enum WindowsKeyboardState
 {
     KeyDown = 0x0100,
     KeyUp = 0x0101,

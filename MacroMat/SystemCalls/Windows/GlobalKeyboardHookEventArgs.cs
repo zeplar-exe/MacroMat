@@ -4,12 +4,12 @@ namespace MacroMat.SystemCalls.Windows;
 
 internal class GlobalKeyboardHookEventArgs : HandledEventArgs
 {
-    public KeyboardState KeyboardState { get; }
+    public WindowsKeyboardState KeyboardState { get; }
     public WindowsKeyboardInputEvent KeyboardData { get; }
 
     public GlobalKeyboardHookEventArgs(
         WindowsKeyboardInputEvent keyboardData,
-        KeyboardState keyboardState)
+        WindowsKeyboardState keyboardState)
     {
         KeyboardData = keyboardData;
         KeyboardState = keyboardState;

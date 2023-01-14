@@ -3,7 +3,7 @@
 namespace MacroMat.SystemCalls.Windows;
 
 [StructLayout(LayoutKind.Sequential)]
-public struct WindowsKeyboardInputEvent
+internal struct WindowsKeyboardInputEvent
 {
     /// <summary>
     ///     A virtual-key code. The code must be a value in the range 1 to 254.
