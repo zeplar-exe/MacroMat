@@ -26,4 +26,14 @@ public static class MacroSimulateExtensions
     {
         return macro.AddInstruction(new SimulateKeyInstruction(key, type, modifiers));
     }
+    
+    public static Macro SimulateUnicode(this Macro macro, string s)
+    {
+        var compound = new CompoundInstruction();
+        
+        compound.AddInstruction(new SendUnicodeInstructions(s, KeyInputType.KeyDown));
+        compound.AddInstruction(new SendUnicodeInstructions(s, KeyInputType.KeyUp));
+        
+        return macro.AddInstruction(compound);
+    }
 }

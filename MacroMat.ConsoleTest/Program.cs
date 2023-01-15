@@ -1,14 +1,12 @@
 ﻿using MacroMat;
 using MacroMat.Extensions;
-using MacroMat.Input;
 
 var macro = new Macro()
     .OnKeyEvent(
-        data => data.IsInjected, 
+        data => data.IsInjected,
         data => Console.WriteLine("Injection: " + data))
     .Wait(2000)
-    .SimulateKeys(new[] { InputKey.G, InputKey.A, InputKey.M, InputKey.E, InputKey.R }, KeyInputType.KeyDown)
-    .SimulateKeys(new[] { InputKey.G, InputKey.A, InputKey.M, InputKey.E, InputKey.R }, KeyInputType.KeyUp);
+    .SimulateUnicode("Wait that actually worked?");
 
 macro.Messages.OnMessage += (sender, message) =>
 {
