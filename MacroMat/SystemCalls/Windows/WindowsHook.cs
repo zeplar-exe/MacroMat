@@ -63,41 +63,37 @@ internal class WindowsHook : IKeyboardHook
 
     public IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam)
     {
-        var fEatKeyStroke = false;
-
         var wparamTyped = wParam.ToInt32();
 
         if (Enum.IsDefined(typeof(WindowsKeyboardState), wparamTyped))
         {
             var o = Marshal.PtrToStructure(lParam, typeof(WindowsKeyboardInputEvent));
-            var p = (WindowsKeyboardInputEvent)o;
-
-            var args = new GlobalKeyboardHookEventArgs(p, (WindowsKeyboardState)wparamTyped);
-            var keyboardData = args.KeyboardData;
-            var keyboardState = args.KeyboardState;
+            
+            var keyboardData = (WindowsKeyboardInputEvent)o!;
+            var keyboardState = (WindowsKeyboardState)wparamTyped;
+            
             const int injectedBit = 4;
 
             var flags = new BitArray(new[] { keyboardData.Flags });
             var isInjected = flags.Count > injectedBit && flags.Get(injectedBit);
-
+            
             var inputType = keyboardState switch
             {
-                WindowsKeyboardState.KeyDown or WindowsKeyboardState.SysKeyUp => KeyInputType.KeyDown,
-                WindowsKeyboardState.KeyUp or WindowsKeyboardState.KeyDown => KeyInputType.KeyUp,
+                WindowsKeyboardState.KeyDown or WindowsKeyboardState.SysKeyDown => KeyInputType.KeyDown,
+                WindowsKeyboardState.KeyUp or WindowsKeyboardState.SysKeyUp => KeyInputType.KeyUp,
                 _ => throw new ArgumentOutOfRangeException()
             };
             
             var eventData = new KeyboardEventData(
                 keyboardData.HardwareScanCode,
                 keyboardData.VirtualCode,
-                inputType, isInjected);
+                inputType, isInjected,
+                keyboardState is WindowsKeyboardState.SysKeyUp or WindowsKeyboardState.SysKeyDown);
             
             OnKeyEvent?.Invoke(this, eventData);
-
-            fEatKeyStroke = args.Handled;
         }
 
-        return fEatKeyStroke ? (IntPtr)1 : Win32.CallNextHookEx(IntPtr.Zero, nCode, wParam, lParam);
+        return Win32.CallNextHookEx(IntPtr.Zero, nCode, wParam, lParam);
     }
     
     public void Dispose()

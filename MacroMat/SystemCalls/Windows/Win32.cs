@@ -235,7 +235,7 @@ internal class Win32
         OEM_CLEAR = 0
     }
 
-    public enum WindowsVirtualKey
+    public enum WindowsVirtualKey : byte
     {
         /// <summary>
         ///     Left mouse button

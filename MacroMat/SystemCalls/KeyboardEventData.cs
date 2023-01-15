@@ -10,13 +10,15 @@ public class KeyboardEventData
     public int VirtualCode { get; }
     public KeyInputType Type { get; }
     public bool IsInjected { get; }
+    public bool IsAlt { get; }
 
-    public KeyboardEventData(int hardwareScancode, int virtualCode, KeyInputType type, bool isInjected)
+    public KeyboardEventData(int hardwareScancode, int virtualCode, KeyInputType type, bool isInjected, bool isAlt)
     {
         HardwareScancode = hardwareScancode;
         VirtualCode = virtualCode;
         Type = type;
         IsInjected = isInjected;
+        IsAlt = isAlt;
     }
 
     public override string ToString()

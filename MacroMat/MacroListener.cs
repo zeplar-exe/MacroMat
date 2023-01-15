@@ -73,6 +73,7 @@ internal class MacroListener : IDisposable
         foreach (var callback in Callbacks)
         {
             callback.Invoke(hook, data);
+            // run on another thread?
         }
     }
 
