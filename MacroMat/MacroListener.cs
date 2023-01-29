@@ -35,7 +35,7 @@ internal class MacroListener : IDisposable
 
         if (MessageLoop == null)
         {
-            Reporter.Error("Failed to initialize MessageLoop, no events will be fired..");
+            Reporter.Error("Failed to initialize MessageLoop, input events will not be handled.");
         }
     }
 
@@ -68,11 +68,11 @@ internal class MacroListener : IDisposable
             .Execute();
     }
 
-    private void OnKey(IKeyboardHook hook, KeyboardEventData data)
+    private void OnKey(IKeyboardHook hook, KeyboardEventArgs args)
     {
         foreach (var callback in Callbacks)
         {
-            callback.Invoke(hook, data);
+            callback.Invoke(hook, args);
             // run on another thread?
         }
     }

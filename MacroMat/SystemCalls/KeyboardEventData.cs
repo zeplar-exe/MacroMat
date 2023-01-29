@@ -7,12 +7,12 @@ namespace MacroMat.SystemCalls;
 public class KeyboardEventData
 {
     public int HardwareScancode { get; }
-    public int VirtualCode { get; }
+    public byte VirtualCode { get; }
     public KeyInputType Type { get; }
     public bool IsInjected { get; }
     public bool IsAlt { get; }
 
-    public KeyboardEventData(int hardwareScancode, int virtualCode, KeyInputType type, bool isInjected, bool isAlt)
+    public KeyboardEventData(int hardwareScancode, byte virtualCode, KeyInputType type, bool isInjected, bool isAlt)
     {
         HardwareScancode = hardwareScancode;
         VirtualCode = virtualCode;

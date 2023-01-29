@@ -1,41 +1,29 @@
 ﻿using MacroMat;
 using MacroMat.Extensions;
+using MacroMat.Input;
 
 var macro = new Macro()
-    .OnKeyEvent(
-        data => data.IsInjected,
-        data => Console.WriteLine("Injection: " + data))
-    .Wait(2000)
-    .SimulateUnicode("Wait that actually worked?");
+    .RemapKey(
+        InputData.FromKey(InputKey.B, KeyInputType.KeyDown), 
+        InputData.FromKey(InputKey.A, KeyInputType.KeyDown))
+    .RemapKey(
+        InputData.FromKey(InputKey.B, KeyInputType.KeyUp), 
+        InputData.FromKey(InputKey.A, KeyInputType.KeyUp));
 
 macro.Messages.OnMessage += (sender, message) =>
 {
     Console.WriteLine($"Message: {message.Message}");
 };
 
-Console.WriteLine("Press Q to execute all instructions, E to execute next instruction, X to exit...");
+macro.ExecuteAll();
 
-var atEnd = false;
+Console.WriteLine("Press X to exit...");
 
 while (true)
 {
     var key = Console.ReadKey(true).Key;
 
-    if (key == ConsoleKey.Q)
-    {
-        macro.ExecuteAll();
-    }
-    else if (key == ConsoleKey.E)
-    {
-        if (!macro.ExecuteNext())
-        {
-            if (!atEnd)
-                Console.WriteLine("No more instructions to execute.");
-            
-            atEnd = true;
-        }
-    }
-    else if (key == ConsoleKey.X)
+    if (key == ConsoleKey.X)
     {
         break;
     }

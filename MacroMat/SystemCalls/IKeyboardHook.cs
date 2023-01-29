@@ -9,4 +9,4 @@ public interface IKeyboardHook : IDisposable
     public bool MessageLoopInit();
 }
 
-public delegate void KeyboardHookCallback(IKeyboardHook hook, KeyboardEventData data);
+public delegate void KeyboardHookCallback(IKeyboardHook hook, KeyboardEventArgs args);

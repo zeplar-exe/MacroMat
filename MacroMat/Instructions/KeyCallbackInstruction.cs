@@ -5,9 +5,9 @@ namespace MacroMat.Instructions;
 public class KeyCallbackInstruction : MacroInstruction
 {
     private Func<KeyboardEventData, bool> Predicate { get; }
-    private Action<KeyboardEventData> Action { get; }
+    private Action<KeyboardEventArgs> Action { get; }
 
-    public KeyCallbackInstruction(Func<KeyboardEventData, bool> predicate, Action<KeyboardEventData> action)
+    public KeyCallbackInstruction(Func<KeyboardEventData, bool> predicate, Action<KeyboardEventArgs> action)
     {
         Predicate = predicate;
         Action = action;
@@ -15,12 +15,12 @@ public class KeyCallbackInstruction : MacroInstruction
 
     public override void Execute(Macro macro)
     {
-        macro.Listener.AddCallback((hook, data) =>
+        macro.Listener.AddCallback((hook, args) =>
         {
-            if (!Predicate.Invoke(data))
+            if (!Predicate.Invoke(args.Data))
                 return;
             
-            Action.Invoke(data);
+            Action.Invoke(args);
         });
     }
 }

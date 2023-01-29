@@ -1,10 +1,18 @@
-﻿using MacroMat.SystemCalls.Windows;
+﻿using MacroMat.Common;
+using MacroMat.SystemCalls.Windows;
 
 namespace MacroMat.Input;
 
 internal static class InputKeyTranslator
 {
-    public static Win32.WindowsVirtualKey? ToWindows(InputKey key)
+    public static byte? CurrentPlatformVirtual(InputKey key)
+    {
+        return new OsSelector<byte?>()
+            .OnWindows(() => (byte?)ToWindowsVirtual(key))
+            .Execute();
+    }
+    
+    public static Win32.WindowsVirtualKey? ToWindowsVirtual(InputKey key)
     {
         return key switch
         {
@@ -48,7 +56,7 @@ internal static class InputKeyTranslator
         };
     }
 
-    public static Win32.WindowsVirtualKey? ToWindows(ModifierKey key)
+    public static Win32.WindowsVirtualKey? ToWindowsVirtual(ModifierKey key)
     {
         return key switch
         {

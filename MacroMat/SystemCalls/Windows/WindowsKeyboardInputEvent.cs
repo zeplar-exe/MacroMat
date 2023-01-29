@@ -8,7 +8,7 @@ internal struct WindowsKeyboardInputEvent
     /// <summary>
     ///     A virtual-key code. The code must be a value in the range 1 to 254.
     /// </summary>
-    public int VirtualCode;
+    public byte VirtualCode;
 
     /// <summary>
     ///     A hardware scan code for the key.

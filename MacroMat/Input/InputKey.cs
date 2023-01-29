@@ -1,6 +1,6 @@
 ﻿namespace MacroMat.Input;
 
-public enum InputKey : ushort
+public enum InputKey : uint
 {
     Zero, One, Two, 
     Three, Four, Five, 

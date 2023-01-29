@@ -6,9 +6,8 @@ namespace MacroMat.SystemCalls.Windows;
 
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
 [SuppressMessage("ReSharper", "InconsistentNaming")]
-internal class Win32
+internal static class Win32
 {
-
     public delegate IntPtr HookProc(int nCode, IntPtr wParam, IntPtr lParam);
 
     public enum InputType : uint

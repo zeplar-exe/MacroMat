@@ -89,8 +89,12 @@ internal class WindowsHook : IKeyboardHook
                 keyboardData.VirtualCode,
                 inputType, isInjected,
                 keyboardState is WindowsKeyboardState.SysKeyUp or WindowsKeyboardState.SysKeyDown);
+
+            var args = new KeyboardEventArgs(eventData);
             
-            OnKeyEvent?.Invoke(this, eventData);
+            OnKeyEvent?.Invoke(this, args);
+            
+            return args.Handled ? IntPtr.Zero : Win32.CallNextHookEx(IntPtr.Zero, nCode, wParam, lParam);
         }
 
         return Win32.CallNextHookEx(IntPtr.Zero, nCode, wParam, lParam);

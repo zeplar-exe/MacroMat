@@ -44,7 +44,7 @@ public class OsSelector
     }
 }
 
-public class OsSelector<T> where T : class
+public class OsSelector<T>
 {
     private Func<T>? Windows { get; set; }
     private Func<T>? Mac { get; set; }
@@ -75,15 +75,15 @@ public class OsSelector<T> where T : class
     {
         if (OperatingSystem.IsWindows())
         {
-            return Windows?.Invoke();
+            return Windows == null ? default : Windows.Invoke();
         }
         else if (OperatingSystem.IsMacOS())
         {
-            return Mac?.Invoke();
+            return Mac == null ? default : Mac.Invoke();
         }
         else if (OperatingSystem.IsLinux())
         {
-            return Linux?.Invoke();
+            return Linux == null ? default : Linux.Invoke();
         }
 
         return default;

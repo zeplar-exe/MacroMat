@@ -9,41 +9,11 @@ namespace MacroMat.Instructions;
 
 public class SimulateKeyInstruction : MacroInstruction
 {
-    private uint[]? Scancodes { get; }
-    public InputKey[] Keys { get; }
-    public KeyInputType Type { get; }
-    public ModifierKey Modifiers { get; }
+    private InputData Data { get; }
     
-    public SimulateKeyInstruction(uint scancode, KeyInputType type, ModifierKey modifiers = 0)
+    public SimulateKeyInstruction(InputData data)
     {
-        Scancodes = new[] { scancode };
-        Keys = Array.Empty<InputKey>();
-        Type = type;
-        Modifiers = modifiers;
-    }
-
-    public SimulateKeyInstruction(uint[] scancodes, KeyInputType type, ModifierKey modifiers = 0)
-    {
-        Scancodes = scancodes;
-        Keys = Array.Empty<InputKey>();
-        Type = type;
-        Modifiers = modifiers;
-    }
-    
-    public SimulateKeyInstruction(InputKey key, KeyInputType type, ModifierKey modifiers = 0)
-    {
-        Scancodes = null;
-        Keys = new[] { key };
-        Type = type;
-        Modifiers = modifiers;
-    }
-    
-    public SimulateKeyInstruction(InputKey[] keys, KeyInputType type, ModifierKey modifiers = 0)
-    {
-        Scancodes = null;
-        Keys = keys;
-        Type = type;
-        Modifiers = modifiers;
+        Data = data;
     }
 
     public override void Execute(Macro macro)
@@ -56,42 +26,18 @@ public class SimulateKeyInstruction : MacroInstruction
 
             os.OnWindows(() =>
             {
-                var virtualKeys = new List<Win32.WindowsVirtualKey>();
-                
-                foreach (var key in Keys)
-                {
-                    var virtualKey = InputKeyTranslator.ToWindows(key);
-
-                    if (virtualKey == null)
-                    {
-                        macro.Messages.Log($"'{Keys}' does not have a Windows virtual key equivalent.");
-                        
-                        continue;
-                    }
-                    
-                    virtualKeys.Add(virtualKey.Value);
-                }
-                
-                if (virtualKeys.Count == 0)
-                {
-                    macro.Messages.Log($"'{Keys}' does not have any Windows virtual key equivalent.");
-                    
-                    return;
-                }
-
                 var flags = (Win32.KEYBDEVENTF)0;
 
-                if (Type == KeyInputType.KeyUp)
+                if (Data.Type == KeyInputType.KeyUp)
                     flags |= Win32.KEYBDEVENTF.KEYUP;
-                
-                if (Scancodes != null)
-                    flags |= Win32.KEYBDEVENTF.SCANCODE;
 
                 var inputs = new List<Win32.INPUT>();
 
-                if (Scancodes != null)
+                if (Data.IsScancode)
                 {
-                    foreach (var scancode in Scancodes)
+                    flags |= Win32.KEYBDEVENTF.SCANCODE;
+                    
+                    foreach (var scancode in Data.Scancodes)
                     {
                         var input = new Win32.INPUT
                         {
@@ -112,6 +58,22 @@ public class SimulateKeyInstruction : MacroInstruction
                 }
                 else
                 {
+                    var virtualKeys = new List<Win32.WindowsVirtualKey>();
+                    
+                    foreach (var key in Data.InputKeys)
+                    {
+                        var virtualKey = InputKeyTranslator.ToWindowsVirtual(key);
+
+                        if (virtualKey == null)
+                        {
+                            macro.Messages.Log($"'{key}' does not have a Windows virtual key equivalent.");
+                        
+                            continue;
+                        }
+                    
+                        virtualKeys.Add(virtualKey.Value);
+                    }
+                    
                     foreach (var virtualKey in virtualKeys)
                     {
                         var scancode = Win32.MapVirtualKeyEx(

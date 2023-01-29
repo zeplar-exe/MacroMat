@@ -6,12 +6,12 @@ using MacroMat.SystemCalls.Windows;
 
 namespace MacroMat.Instructions;
 
-public class SendUnicodeInstructions : MacroInstruction
+public class SendUnicodeInstruction : MacroInstruction
 {
     public string UnicodeString { get; }
     public KeyInputType Type { get; }
 
-    public SendUnicodeInstructions(string unicodeString, KeyInputType type)
+    public SendUnicodeInstruction(string unicodeString, KeyInputType type)
     {
         UnicodeString = unicodeString;
         Type = type;
