@@ -2,11 +2,11 @@
 
 namespace MacroMat.SystemCalls;
 
-public interface IKeyboardHook : IDisposable
+internal interface IKeyboardHook : IDisposable
 {
     public event KeyboardHookCallback? OnKeyEvent;
 
     public bool MessageLoopInit();
 }
 
-public delegate void KeyboardHookCallback(IKeyboardHook hook, KeyboardEventArgs args);
+internal delegate void KeyboardHookCallback(IKeyboardHook hook, KeyboardEventArgs args);

@@ -1,6 +1,6 @@
 ﻿namespace MacroMat.Common;
 
-public class OsSelector
+internal class OsSelector
 {
     private Action? Windows { get; set; }
     private Action? Mac { get; set; }

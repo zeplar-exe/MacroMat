@@ -1,6 +1,6 @@
 ﻿namespace MacroMat.SystemCalls;
 
-public abstract class MessageLoop
+internal abstract class MessageLoop
 {
     protected Action? InitialAction { get; }
     protected Queue<Action> RequestedActions { get; }

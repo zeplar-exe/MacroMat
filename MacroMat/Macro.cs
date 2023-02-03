@@ -1,6 +1,4 @@
-﻿using MacroMat.Input;
-using MacroMat.Instructions;
-using MacroMat.SystemCalls;
+﻿using MacroMat.Instructions;
 
 namespace MacroMat;
 

@@ -1,2 +1,4 @@
-- name: Introduction
-  href: intro.md
+- name: MacroMat - A C# Macro Library
+  href: md/intro.md
+- name: Getting Started
+  href: md/getting-started.md

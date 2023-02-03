@@ -1,21 +1,23 @@
-﻿using System.ComponentModel;
-using System.Runtime.InteropServices;
-
-using MacroMat.Common;
+﻿using MacroMat.Common;
 using MacroMat.Input;
 using MacroMat.SystemCalls.Windows;
 
 namespace MacroMat.Instructions;
 
+/// <summary>
+/// Instruction to simulate a key event.
+/// </summary>
 public class SimulateKeyInstruction : MacroInstruction
 {
     private InputData Data { get; }
-    
+
+    /// <inheritdoc />
     public SimulateKeyInstruction(InputData data)
     {
         Data = data;
     }
 
+    /// <inheritdoc />
     public override void Execute(Macro macro)
     {
         var loop = macro.Listener.MessageLoop;

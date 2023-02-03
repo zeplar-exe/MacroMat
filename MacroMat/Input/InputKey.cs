@@ -1,5 +1,8 @@
 ﻿namespace MacroMat.Input;
 
+/// <summary>
+/// Cross-platform representation of keyboard keys.
+/// </summary>
 public enum InputKey : uint
 {
     Zero, One, Two, 

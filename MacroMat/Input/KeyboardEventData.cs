@@ -1,14 +1,24 @@
 ﻿using System.Text;
 
-using MacroMat.Input;
+namespace MacroMat.Input;
 
-namespace MacroMat.SystemCalls;
-
+/// <summary>
+/// Low-level keyboard event data.
+/// </summary>
 public class KeyboardEventData
 {
+    /// <summary>
+    /// Hardware-dependant scancode.
+    /// </summary>
     public int HardwareScancode { get; }
+    /// <summary>
+    /// OS-dependant virtual code.
+    /// </summary>
     public byte VirtualCode { get; }
     public KeyInputType Type { get; }
+    /// <summary>
+    /// Whether the event was simulated/injected.
+    /// </summary>
     public bool IsInjected { get; }
     public bool IsAlt { get; }
 
@@ -21,6 +31,7 @@ public class KeyboardEventData
         IsAlt = isAlt;
     }
 
+    /// <inheritdoc />
     public override string ToString()
     {
         return new StringBuilder()

@@ -94,7 +94,7 @@ internal class WindowsHook : IKeyboardHook
             
             OnKeyEvent?.Invoke(this, args);
             
-            return args.Handled ? IntPtr.Zero : Win32.CallNextHookEx(IntPtr.Zero, nCode, wParam, lParam);
+            return args.Handled ? IntPtr.MaxValue : Win32.CallNextHookEx(IntPtr.Zero, nCode, wParam, lParam);
         }
 
         return Win32.CallNextHookEx(IntPtr.Zero, nCode, wParam, lParam);

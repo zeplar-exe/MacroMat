@@ -1,22 +1,25 @@
-﻿using System.Text;
-
-using MacroMat.Common;
+﻿using MacroMat.Common;
 using MacroMat.Input;
 using MacroMat.SystemCalls.Windows;
 
 namespace MacroMat.Instructions;
 
+/// <summary>
+/// Instruction to send unicode input, best used for typing text.
+/// </summary>
 public class SendUnicodeInstruction : MacroInstruction
 {
     public string UnicodeString { get; }
     public KeyInputType Type { get; }
 
+    /// <inheritdoc />
     public SendUnicodeInstruction(string unicodeString, KeyInputType type)
     {
         UnicodeString = unicodeString;
         Type = type;
     }
 
+    /// <inheritdoc />
     public override void Execute(Macro macro)
     {
         var loop = macro.Listener.MessageLoop;

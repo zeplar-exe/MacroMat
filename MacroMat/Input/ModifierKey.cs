@@ -1,5 +1,8 @@
 ﻿namespace MacroMat.Input;
 
+/// <summary>
+/// Modifier keys for <see cref="InputData"/>.
+/// </summary>
 [Flags]
 public enum ModifierKey
 {

@@ -1,6 +1,4 @@
-﻿using System.Runtime.InteropServices;
-
-namespace MacroMat.SystemCalls.Windows;
+﻿namespace MacroMat.SystemCalls.Windows;
 
 internal class WindowsLoop : MessageLoop
 {

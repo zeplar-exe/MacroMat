@@ -4,17 +4,22 @@ using MacroMat.SystemCalls.Windows;
 
 namespace MacroMat.Instructions;
 
+/// <summary>
+/// Instruction to simulate a mouse click at its current position.
+/// </summary>
 public class SimulateMouseClickInstruction : MacroInstruction
 {
     public MouseButton Button { get; }
     public MouseInputType Type { get; }
 
+    /// <inheritdoc />
     public SimulateMouseClickInstruction(MouseButton button, MouseInputType type)
     {
         Button = button;
         Type = type;
     }
 
+    /// <inheritdoc />
     public override void Execute(Macro macro)
     {
         var loop = macro.Listener.MessageLoop;
