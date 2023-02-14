@@ -13,6 +13,7 @@ namespace MacroMat.SystemCalls.Windows;
 //Based on https://gist.github.com/Stasonix
 internal class WindowsHook : IKeyboardHook
 {
+    // ReSharper disable once InconsistentNaming
     public const int WH_KEYBOARD_LL = 13;
     
     private Win32.HookProc? KeyboardHookRef { get; set; }

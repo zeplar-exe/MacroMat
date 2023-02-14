@@ -7,6 +7,9 @@ namespace MacroMat.Input;
 /// </summary>
 public class KeyboardEventArgs : HandledEventArgs
 {
+    /// <summary>
+    /// Keyboard event data... yeah.
+    /// </summary>
     public KeyboardEventData Data { get; }
 
     /// <inheritdoc />

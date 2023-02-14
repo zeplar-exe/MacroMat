@@ -5,6 +5,9 @@
 /// </summary>
 public class WaitInstruction : MacroInstruction
 {
+    /// <summary>
+    /// <see cref="TimeSpan"/> to wait.
+    /// </summary>
     public TimeSpan Time { get; }
 
     /// <inheritdoc />

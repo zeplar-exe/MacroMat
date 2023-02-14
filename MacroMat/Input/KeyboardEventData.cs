@@ -15,14 +15,20 @@ public class KeyboardEventData
     /// OS-dependant virtual code.
     /// </summary>
     public byte VirtualCode { get; }
+    /// <summary>
+    /// Input type of this keyboard event. 
+    /// </summary>
     public KeyInputType Type { get; }
     /// <summary>
     /// Whether the event was simulated/injected.
     /// </summary>
     public bool IsInjected { get; }
+    /// <summary>
+    /// Whether the alt key is pressed for this keyboard event (counts for windows as sys keys, for example).
+    /// </summary>
     public bool IsAlt { get; }
 
-    public KeyboardEventData(int hardwareScancode, byte virtualCode, KeyInputType type, bool isInjected, bool isAlt)
+    internal KeyboardEventData(int hardwareScancode, byte virtualCode, KeyInputType type, bool isInjected, bool isAlt)
     {
         HardwareScancode = hardwareScancode;
         VirtualCode = virtualCode;

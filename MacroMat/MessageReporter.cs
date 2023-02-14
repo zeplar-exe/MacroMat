@@ -11,10 +11,16 @@ public class MessageReporter
     /// Event invoked whenever a message is logged, error or not.
     /// </summary>
     public event EventHandler<MacroMessage>? OnMessage;
+    
     /// <summary>
     /// Event invoked whenever an error message is logged.
     /// </summary>
     public event EventHandler<MacroMessage>? OnError;
+    
+    /// <summary>
+    /// Flag whether to throw an exception whenever an error is logged.
+    /// </summary>
+    public bool ThrowExceptionOnError { get; set; }
 
     internal MessageReporter()
     {
@@ -34,6 +40,7 @@ public class MessageReporter
 
     /// <summary>
     /// Log an error message, invoking <see cref="OnMessage"/> and <see cref="OnError"/>.
+    /// Additionally throws an exception if <see cref="ThrowExceptionOnError"/> is true.
     /// </summary>
     public void Error(string text)
     {
@@ -42,6 +49,9 @@ public class MessageReporter
         Messages.Add(message);
         OnMessage?.Invoke(this, message);
         OnError?.Invoke(this, message);
+
+        if (ThrowExceptionOnError)
+            throw new MacroException($"An error occured during macro execution: {text}");
     }
 
     /// <summary>

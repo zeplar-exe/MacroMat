@@ -9,7 +9,13 @@ namespace MacroMat.Instructions;
 /// </summary>
 public class SendUnicodeInstruction : MacroInstruction
 {
+    /// <summary>
+    /// String of unicode characters to simulate.
+    /// </summary>
     public string UnicodeString { get; }
+    /// <summary>
+    /// Input type for the unicode string.
+    /// </summary>
     public KeyInputType Type { get; }
 
     /// <inheritdoc />

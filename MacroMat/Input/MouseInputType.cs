@@ -5,13 +5,12 @@
 /// </summary>
 public enum MouseInputType
 {
-    None,
     /// <summary>
-    /// Represents the mouse button as pressed.
+    /// Represents a mouse button as pressed.
     /// </summary>
     Down,
     /// <summary>
-    /// Represents hte mouse button as released.
+    /// Represents a mouse button as released.
     /// </summary>
     Up
 }

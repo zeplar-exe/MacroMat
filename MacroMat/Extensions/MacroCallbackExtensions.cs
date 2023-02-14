@@ -1,6 +1,5 @@
 ﻿using MacroMat.Input;
 using MacroMat.Instructions;
-using MacroMat.SystemCalls;
 
 namespace MacroMat.Extensions;
 

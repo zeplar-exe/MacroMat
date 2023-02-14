@@ -44,7 +44,7 @@ internal class OsSelector
     }
 }
 
-public class OsSelector<T>
+internal class OsSelector<T>
 {
     private Func<T>? Windows { get; set; }
     private Func<T>? Mac { get; set; }

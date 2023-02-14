@@ -9,7 +9,13 @@ namespace MacroMat.Instructions;
 /// </summary>
 public class SimulateMouseClickInstruction : MacroInstruction
 {
+    /// <summary>
+    /// Mouse button to simulate.
+    /// </summary>
     public MouseButton Button { get; }
+    /// <summary>
+    /// Mouse input type to simulate.
+    /// </summary>
     public MouseInputType Type { get; }
 
     /// <inheritdoc />
@@ -24,7 +30,7 @@ public class SimulateMouseClickInstruction : MacroInstruction
     {
         var loop = macro.Listener.MessageLoop;
         
-        loop.EnqueueAction(() =>
+        loop?.EnqueueAction(() =>
         {
             var os = new OsSelector();
             
