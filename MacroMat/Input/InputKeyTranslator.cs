@@ -52,23 +52,15 @@ internal static class InputKeyTranslator
             InputKey.X => Win32.WindowsVirtualKey.KEY_X,
             InputKey.Y => Win32.WindowsVirtualKey.KEY_Y,
             InputKey.Z => Win32.WindowsVirtualKey.KEY_Z,
-            _ => null
-        };
-    }
-
-    public static Win32.WindowsVirtualKey? ToWindowsVirtual(ModifierKey key)
-    {
-        return key switch
-        {
-            ModifierKey.Shift => Win32.WindowsVirtualKey.SHIFT,
-            ModifierKey.LeftShift => Win32.WindowsVirtualKey.LSHIFT,
-            ModifierKey.RightShift => Win32.WindowsVirtualKey.RSHIFT,
-            ModifierKey.Alt => Win32.WindowsVirtualKey.MENU,
-            ModifierKey.LeftAlt => Win32.WindowsVirtualKey.LMENU,
-            ModifierKey.RightAlt => Win32.WindowsVirtualKey.RMENU,
-            ModifierKey.Control => Win32.WindowsVirtualKey.CONTROL,
-            ModifierKey.LeftControl => Win32.WindowsVirtualKey.LCONTROL,
-            ModifierKey.RightControl => Win32.WindowsVirtualKey.RCONTROL,
+            InputKey.Shift => Win32.WindowsVirtualKey.SHIFT,
+            InputKey.LeftShift => Win32.WindowsVirtualKey.LSHIFT,
+            InputKey.RightShift => Win32.WindowsVirtualKey.RSHIFT,
+            InputKey.Alt => Win32.WindowsVirtualKey.MENU,
+            InputKey.LeftAlt => Win32.WindowsVirtualKey.LMENU,
+            InputKey.RightAlt => Win32.WindowsVirtualKey.RMENU,
+            InputKey.Control => Win32.WindowsVirtualKey.CONTROL,
+            InputKey.LeftControl => Win32.WindowsVirtualKey.LCONTROL,
+            InputKey.RightControl => Win32.WindowsVirtualKey.RCONTROL,
             _ => null
         };
     }

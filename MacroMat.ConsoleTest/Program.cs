@@ -4,11 +4,11 @@ using MacroMat.Input;
 
 var macro = new Macro()
     .RemapKey(
-        InputData.FromKey(0, KeyInputType.KeyDown, ModifierKey.Alt), 
-        InputData.FromKey(0, KeyInputType.KeyDown, ModifierKey.Shift))
+        InputData.FromKey(InputKey.Alt, KeyInputType.KeyDown), 
+        InputData.FromKey(InputKey.Shift, KeyInputType.KeyDown))
     .RemapKey(
-        InputData.FromKey(0, KeyInputType.KeyUp, ModifierKey.Alt), 
-        InputData.FromKey(0, KeyInputType.KeyUp, ModifierKey.Shift));
+        InputData.FromKey(InputKey.Alt, KeyInputType.KeyUp), 
+        InputData.FromKey(InputKey.Shift, KeyInputType.KeyUp));
 
 macro.Messages.OnMessage += (sender, message) =>
 {

@@ -20,5 +20,17 @@ public enum InputKey : uint
     P, Q, R, 
     S, T, U, 
     V, W, X, 
-    Y, Z
+    Y, Z,
+    
+    Shift,
+    LeftShift,
+    RightShift,
+    
+    Alt,
+    LeftAlt,
+    RightAlt,
+    
+    Control,
+    LeftControl,
+    RightControl,
 }

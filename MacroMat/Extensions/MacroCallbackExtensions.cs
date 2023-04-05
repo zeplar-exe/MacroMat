@@ -62,7 +62,7 @@ public static class MacroCallbackExtensions
                 if (key.Type != data.Type)
                     return false;
 
-                if (key.Modifiers.HasFlag(ModifierKey.Alt) && !data.IsAlt)
+                if (key.ContainsKey(InputKey.Alt) && !data.IsAlt)
                     return false;
 
                 // TODO: What about other modifiers?

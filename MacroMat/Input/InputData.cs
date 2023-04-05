@@ -12,10 +12,6 @@ public readonly struct InputData
     /// </summary>
     public KeyInputType Type { get; }
     /// <summary>
-    /// Modifier keys attached to the input.
-    /// </summary>
-    public ModifierKey Modifiers { get; }
-    /// <summary>
     /// Whether this input contains scancodes or <see cref="InputKey"/>s.
     /// </summary>
     public bool IsScancode { get; }
@@ -36,40 +32,49 @@ public readonly struct InputData
     /// <summary>
     /// Create an <see cref="InputData"/> from a single scancode with its type and modifier keys.
     /// </summary>
-    public static InputData FromScancode(uint scancode, KeyInputType type, ModifierKey modifiers = 0)
+    public static InputData FromScancode(uint scancode, KeyInputType type)
     {
-        return FromScancodes(new[] { scancode }, type, modifiers);
+        return FromScancodes(new[] { scancode }, type);
     }
     
     /// <summary>
     /// Create an <see cref="InputData"/> from multiple scancodes with its type and modifier keys.
     /// </summary>
-    public static InputData FromScancodes(uint[] scancode, KeyInputType type, ModifierKey modifiers = 0)
+    public static InputData FromScancodes(uint[] scancode, KeyInputType type)
     {
-        return new InputData(scancode, type, modifiers, true);
+        return new InputData(scancode, type, true);
     }
 
     /// <summary>
     /// Create an <see cref="InputData"/> from a single <see cref="InputKey"/> with its type and modifier keys.
     /// </summary>
-    public static InputData FromKey(InputKey key, KeyInputType type, ModifierKey modifiers = 0)
+    public static InputData FromKey(InputKey key, KeyInputType type)
     {
-        return FromKeys(new[] { key }, type, modifiers);
+        return FromKeys(new[] { key }, type);
     }
     
     /// <summary>
     /// Create an <see cref="InputData"/> from multiple <see cref="InputKey"/>s with its type and modifier keys.
     /// </summary>
-    public static InputData FromKeys(InputKey[] key, KeyInputType type, ModifierKey modifiers = 0)
+    public static InputData FromKeys(InputKey[] key, KeyInputType type)
     {
-        return new InputData(key.Cast<uint>().ToArray(), type, modifiers, false);
+        return new InputData(key.Cast<uint>().ToArray(), type, false);
     }
 
-    private InputData(uint[] keys, KeyInputType type, ModifierKey modifiers, bool isScancode)
+    private InputData(uint[] keys, KeyInputType type, bool isScancode)
     {
         Keys = keys;
         Type = type;
-        Modifiers = modifiers;
         IsScancode = isScancode;
+    }
+
+    public bool ContainsKey(InputKey key)
+    {
+        return InputKeys.Contains(key);
+    }
+
+    public bool ContainsScancode(uint code)
+    {
+        return Scancodes.Contains(code);
     }
 }
