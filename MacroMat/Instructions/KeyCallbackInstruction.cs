@@ -20,12 +20,15 @@ public class KeyCallbackInstruction : MacroInstruction
     /// <inheritdoc />
     public override void Execute(Macro macro)
     {
-        macro.Listener.AddCallback((hook, args) =>
+        if (macro.Listener.KeyboardHook == null)
+            return;
+        
+        macro.Listener.KeyboardHook.OnKeyEvent += (hook, args) =>
         {
             if (!Predicate.Invoke(args.Data))
                 return;
             
             Action.Invoke(args);
-        });
+        };
     }
 }

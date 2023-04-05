@@ -8,43 +8,29 @@ namespace MacroMat;
 internal class MacroListener : IDisposable
 {
     private MessageReporter Reporter { get; }
-    private List<KeyboardHookCallback> Callbacks { get; }
 
-    internal IKeyboardHook? KeyboardHook { get; }
+    internal IPlatformHook? PlatformHook { get; }
+    internal IKeyboardHook? KeyboardHook => PlatformHook as IKeyboardHook;
+    internal IMouseHook? MouseHook => PlatformHook as IMouseHook;
     internal MessageLoop? MessageLoop { get; }
 
     public MacroListener(MessageReporter reporter)
     {
         Reporter = reporter;
-        Callbacks = new List<KeyboardHookCallback>();
-        KeyboardHook = GetKeyboardHook();
+        PlatformHook = GetPlatformHook();
         
         MessageLoop = GetMessageLoop(() =>
         {
-            if (KeyboardHook?.MessageLoopInit() ?? false)
+            if (PlatformHook == null || !PlatformHook.MessageLoopInit())
             {
-                KeyboardHook.OnKeyEvent += OnKey;
-            }
-            else
-            {
-                Reporter.Error("Failed to initialize KeyboardHook, key events will not be fired.");
+                Reporter.Error("Failed to initialize platform hook, input events will not be fired.");
             }
         });
 
         if (MessageLoop == null)
         {
-            Reporter.Error("Failed to initialize MessageLoop, input events will not be handled.");
+            Reporter.Error("Failed to initialize message loop, input events will not be handled.");
         }
-    }
-
-    public void AddCallback(KeyboardHookCallback callback)
-    {
-        Callbacks.Add(callback);
-    }
-
-    public bool RemoveCallback(KeyboardHookCallback callback)
-    {
-        return Callbacks.Remove(callback);
     }
 
     public void Start()
@@ -59,25 +45,15 @@ internal class MacroListener : IDisposable
             .Execute();
     }
 
-    private IKeyboardHook? GetKeyboardHook()
+    private IPlatformHook? GetPlatformHook()
     {
-        return new OsSelector<IKeyboardHook>()
+        return new OsSelector<IPlatformHook>()
             .OnWindows(() => new WindowsHook(Reporter))
             .Execute();
     }
 
-    private void OnKey(IKeyboardHook hook, KeyboardEventArgs args)
-    {
-        foreach (var callback in Callbacks)
-        {
-            callback.Invoke(hook, args);
-            // run on another thread?
-        }
-    }
-
     public void Dispose()
     {
-        Callbacks.Clear();
         MessageLoop?.Stop();
         KeyboardHook?.Dispose();
     }

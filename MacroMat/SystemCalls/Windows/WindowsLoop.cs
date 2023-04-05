@@ -38,7 +38,7 @@ internal class WindowsLoop : MessageLoop
 
                         continue;
                     }
-
+                    
                     Win32.TranslateMessage(ref message);
                     Win32.DispatchMessage(ref message);
                 }

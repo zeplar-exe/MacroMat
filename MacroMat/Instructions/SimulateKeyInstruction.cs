@@ -64,6 +64,9 @@ public class SimulateKeyInstruction : MacroInstruction
                     
                     foreach (var key in Data.InputKeys)
                     {
+                        if (key == InputKey.None)
+                            continue;
+                        
                         var virtualKey = InputKeyTranslator.ToWindowsVirtual(key);
 
                         if (virtualKey == null)

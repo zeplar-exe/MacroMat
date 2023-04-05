@@ -5,6 +5,8 @@
 /// </summary>
 public enum InputKey : uint
 {
+    None = 0,
+    
     Zero, One, Two, 
     Three, Four, Five, 
     Six, Seven, Eight, 

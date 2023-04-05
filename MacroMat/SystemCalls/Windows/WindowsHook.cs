@@ -11,26 +11,34 @@ namespace MacroMat.SystemCalls.Windows;
 // Black magic in a nutshell.
 
 //Based on https://gist.github.com/Stasonix
-internal class WindowsHook : IKeyboardHook
+internal class WindowsHook : IPlatformHook, IKeyboardHook, IMouseHook
 {
     // ReSharper disable once InconsistentNaming
     public const int WH_KEYBOARD_LL = 13;
+    // ReSharper disable once InconsistentNaming
+    public const int WH_MOUSE_LL = 14;
     
-    private Win32.HookProc? KeyboardHookRef { get; set; }
     private IntPtr User32LibraryHandle { get; set; }
-    private IntPtr WindowsHookHandle { get; set; }
+    
+    private List<(int HookCode, Win32.HookProc Proc)> Hooks { get; }
+    private List<IntPtr> HookHandles { get; }
     
     private MessageReporter Reporter { get; }
     
     public event KeyboardHookCallback? OnKeyEvent;
+    public event MouseHookCallback? OnMouseEvent;
 
     public WindowsHook(MessageReporter reporter)
     {
+        Hooks = new List<(int HookCode, Win32.HookProc Proc)>();
+        HookHandles = new List<IntPtr>();
+        
         Reporter = reporter;
-        WindowsHookHandle = IntPtr.Zero;
         User32LibraryHandle = IntPtr.Zero;
-        KeyboardHookRef = LowLevelKeyboardProc; 
-        // keep KeyboardHookRef alive, GC is not aware about SetWindowsHookEx behaviour.
+
+        Hooks.Add((WH_KEYBOARD_LL, LowLevelKeyboardProc));
+        Hooks.Add((WH_MOUSE_LL, LowLevelMouseProc));
+        // keep KeyboardHookRef, MouseHookRef alive, GC is not aware about SetWindowsHookEx behaviour.
 
         User32LibraryHandle = Win32.LoadLibrary("User32");
 
@@ -43,20 +51,22 @@ internal class WindowsHook : IKeyboardHook
 
     public bool MessageLoopInit()
     {
-        if (KeyboardHookRef == null)
+        if (Hooks.Count == 0)
             return false;
         
-        WindowsHookHandle = Win32.SetWindowsHookEx(WH_KEYBOARD_LL, KeyboardHookRef, User32LibraryHandle, 0);
-
-        if (WindowsHookHandle == IntPtr.Zero)
+        foreach (var hook in Hooks)
         {
-            WindowsHelper.HandleError(e =>
-                Reporter.Error(
-                    $"Failed to adjust keyboard hooks for '{Process.GetCurrentProcess().ProcessName}': " +
-                    $"[{e.NativeErrorCode}] {e.Message}."));
-            
+            var handle = Win32.SetWindowsHookEx(hook.HookCode, hook.Proc, User32LibraryHandle, 0);
 
-            return false;
+            if (handle == IntPtr.Zero)
+            {
+                WindowsHelper.HandleError(e =>
+                    Reporter.Log(
+                        $"Failed to adjust hook ({hook.HookCode}): " +
+                        $"[{e.NativeErrorCode}] {e.Message}."));
+            }
+            
+            HookHandles.Add(handle);
         }
 
         return true;
@@ -68,9 +78,7 @@ internal class WindowsHook : IKeyboardHook
 
         if (Enum.IsDefined(typeof(WindowsKeyboardState), wparamTyped))
         {
-            var o = Marshal.PtrToStructure(lParam, typeof(WindowsKeyboardInputEvent));
-            
-            var keyboardData = (WindowsKeyboardInputEvent)o!;
+            var keyboardData = (KBDLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(KBDLLHOOKSTRUCT))!;
             var keyboardState = (WindowsKeyboardState)wparamTyped;
             
             const int injectedBit = 4;
@@ -100,6 +108,26 @@ internal class WindowsHook : IKeyboardHook
 
         return Win32.CallNextHookEx(IntPtr.Zero, nCode, wParam, lParam);
     }
+
+    public IntPtr LowLevelMouseProc(int nCode, IntPtr wParam, IntPtr lParam)
+    {
+        var wparamTyped = wParam.ToInt32();
+
+        if (Enum.IsDefined(typeof(WindowsMouseState), wparamTyped))
+        {
+            var keyboardData = (MSLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(MSLLHOOKSTRUCT))!;
+            var keyboardState = (WindowsMouseState)wparamTyped;
+            
+            var eventData = new MouseEventData(MouseButton.Left, MouseInputType.Down);
+            var args = new MouseEventArgs(eventData);
+            
+            OnMouseEvent?.Invoke(this, args);
+            
+            return args.Handled ? IntPtr.MaxValue : Win32.CallNextHookEx(IntPtr.Zero, nCode, wParam, lParam);
+        }
+
+        return Win32.CallNextHookEx(IntPtr.Zero, nCode, wParam, lParam);
+    }
     
     public void Dispose()
     {
@@ -116,22 +144,22 @@ internal class WindowsHook : IKeyboardHook
     {
         if (disposing) // because we can unhook only in the same thread, not in garbage collector thread
         {
-            if (WindowsHookHandle != IntPtr.Zero)
+            foreach (var handle in HookHandles)
             {
-                if (!Win32.UnhookWindowsHookEx(WindowsHookHandle))
+                if (handle == IntPtr.Zero)
+                    continue;
+                
+                if (!Win32.UnhookWindowsHookEx(handle))
                 {
                     WindowsHelper.HandleError(e =>
                         Reporter.Error(
                             $"Failed to remove keyboard hooks for '{Process.GetCurrentProcess().ProcessName}': " +
                             $"[{e.NativeErrorCode}] {e.Message}."));
                 }
-
-                WindowsHookHandle = IntPtr.Zero;
-
-                // ReSharper disable once DelegateSubtraction
-                
-                KeyboardHookRef -= LowLevelKeyboardProc;
             }
+            
+            HookHandles.Clear();
+            Hooks.Clear();
         }
 
         if (User32LibraryHandle != IntPtr.Zero)

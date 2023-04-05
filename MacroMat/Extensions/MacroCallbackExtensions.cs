@@ -39,18 +39,24 @@ public static class MacroCallbackExtensions
 
                 if (key.IsScancode)
                 {
+                    // TODO: check against multiple keys?
                     if (key.Scancodes.First() != data.HardwareScancode)
                         return false;
                 }
                 else
                 {
-                    var virtualCode = InputKeyTranslator.CurrentPlatformVirtual(key.InputKeys.First());
+                    var firstKey = key.InputKeys.FirstOrDefault();
 
-                    if (virtualCode == null)
-                        return false;
+                    if (firstKey != InputKey.None)
+                    {
+                        var virtualCode = InputKeyTranslator.CurrentPlatformVirtual(firstKey);
 
-                    if (virtualCode != data.VirtualCode)
-                        return false;
+                        if (virtualCode == null)
+                            return false;
+
+                        if (virtualCode != data.VirtualCode)
+                            return false;
+                    }
                 }
 
                 if (key.Type != data.Type)
@@ -59,7 +65,7 @@ public static class MacroCallbackExtensions
                 if (key.Modifiers.HasFlag(ModifierKey.Alt) && !data.IsAlt)
                     return false;
 
-                // What about other modifiers?
+                // TODO: What about other modifiers?
 
                 return true;
             },
