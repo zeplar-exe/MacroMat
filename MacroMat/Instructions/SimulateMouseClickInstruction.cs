@@ -43,16 +43,23 @@ public class SimulateMouseClickInstruction : MacroInstruction
                     (MouseButton.Left, MouseInputType.Down) => Win32.MOUSEEVENTF.LEFTDOWN,
                     (MouseButton.Left, MouseInputType.Up) => Win32.MOUSEEVENTF.LEFTUP,
             
-                    (MouseButton.Right, MouseInputType.Down) => Win32.MOUSEEVENTF.RIGHTUP,
+                    (MouseButton.Right, MouseInputType.Down) => Win32.MOUSEEVENTF.RIGHTDOWN,
                     (MouseButton.Right, MouseInputType.Up) => Win32.MOUSEEVENTF.RIGHTUP,
             
-                    (MouseButton.VerticalWheel, MouseInputType.Down) => Win32.MOUSEEVENTF.MIDDLEDOWN,
-                    (MouseButton.VerticalWheel, MouseInputType.Up) => Win32.MOUSEEVENTF.MIDDLEUP,
+                    (MouseButton.MouseWheel, MouseInputType.Down) => Win32.MOUSEEVENTF.MIDDLEDOWN,
+                    (MouseButton.MouseWheel, MouseInputType.Up) => Win32.MOUSEEVENTF.MIDDLEUP,
             
-                    (MouseButton.HorizontalWheel, MouseInputType.Down) => Win32.MOUSEEVENTF.MIDDLEDOWN,
-                    (MouseButton.HorizontalWheel, MouseInputType.Up) => Win32.MOUSEEVENTF.MIDDLEUP,
+                    (MouseButton.MouseWheel, MouseInputType.WheelBackward) => Win32.MOUSEEVENTF.WHEEL,
+                    (MouseButton.MouseWheel, MouseInputType.WheelForward) => Win32.MOUSEEVENTF.WHEEL,
 
                     _ => 0
+                };
+
+                var mouseData = Type switch
+                {
+                    MouseInputType.WheelBackward => -Win32.MOUSEINPUT.WHEEL_DELTA,
+                    MouseInputType.WheelForward => Win32.MOUSEINPUT.WHEEL_DELTA,
+                    _ => 0,
                 };
 
                 var input = new Win32.INPUT
@@ -62,6 +69,7 @@ public class SimulateMouseClickInstruction : MacroInstruction
                     {
                         mi = new Win32.MOUSEINPUT
                         {
+                            mouseData = mouseData,
                             dwFlags = flags,
                             time = 0
                         }

@@ -6,7 +6,7 @@ namespace MacroMat.Extensions;
 /// <summary>
 /// Extension methods relating to input callback instructions.
 /// </summary>
-public static class MacroCallbackExtensions
+public static class MacroKeyCallbackExtensions
 {
     /// <summary>
     /// Enqueue a KeyCallbackInstruction to invoke an action whenever any key event is caught.

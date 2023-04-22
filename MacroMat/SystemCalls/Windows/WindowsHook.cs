@@ -115,10 +115,32 @@ internal class WindowsHook : IPlatformHook, IKeyboardHook, IMouseHook
 
         if (Enum.IsDefined(typeof(WindowsMouseState), wparamTyped))
         {
-            var keyboardData = (MSLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(MSLLHOOKSTRUCT))!;
-            var keyboardState = (WindowsMouseState)wparamTyped;
+            var mouseData = (MSLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(MSLLHOOKSTRUCT))!;
+            var mouseState = (WindowsMouseState)wparamTyped;
+
+            if (mouseState == WindowsMouseState.MouseMove)
+            {
+                return IntPtr.Zero;
+            }
+
+            var button = mouseState switch
+            {
+                WindowsMouseState.LButtonDown => MouseButton.Left,
+                WindowsMouseState.LButtonUp => MouseButton.Left,
+                WindowsMouseState.RButtonDown => MouseButton.Right,
+                WindowsMouseState.RButtonUp => MouseButton.Right,
+                WindowsMouseState.MouseWheel => MouseButton.MouseWheel
+            };
+
+            var inputType = mouseState switch
+            {
+                WindowsMouseState.LButtonDown or WindowsMouseState.RButtonDown => MouseInputType.Down,
+                WindowsMouseState.LButtonUp or WindowsMouseState.RButtonUp => MouseInputType.Up,
+                WindowsMouseState.MouseWheel =>
+                    mouseData.mouseData >> 16 < 0 ? MouseInputType.WheelBackward : MouseInputType.WheelForward
+            };
             
-            var eventData = new MouseEventData(MouseButton.Left, MouseInputType.Down);
+            var eventData = new MouseEventData(button, inputType);
             var args = new MouseEventArgs(eventData);
             
             OnMouseEvent?.Invoke(this, args);

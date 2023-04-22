@@ -92,6 +92,11 @@ public sealed class Macro : IDisposable
         return false;
     }
 
+    public void Clean()
+    {
+        
+    }
+
     /// <inheritdoc />
     public void Dispose()
     {

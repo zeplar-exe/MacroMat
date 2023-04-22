@@ -12,11 +12,7 @@ public enum MouseButton
     /// <summary>
     /// The mouse wheel.
     /// </summary>
-    VerticalWheel,
-    /// <summary>
-    /// The mouse wheel, shifted to horizontal mode (or for mice with horizontal wheels).
-    /// </summary>
-    HorizontalWheel,
+    MouseWheel,
     /// <summary>
     /// The right mouse button.
     /// </summary>

@@ -12,5 +12,7 @@ public enum MouseInputType
     /// <summary>
     /// Represents a mouse button as released.
     /// </summary>
-    Up
+    Up,
+    WheelBackward,
+    WheelForward,
 }

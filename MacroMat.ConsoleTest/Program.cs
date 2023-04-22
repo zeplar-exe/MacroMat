@@ -1,14 +1,9 @@
 ﻿using MacroMat;
 using MacroMat.Extensions;
-using MacroMat.Input;
 
 var macro = new Macro()
-    .RemapKey(
-        InputData.FromKey(InputKey.Alt, KeyInputType.KeyDown), 
-        InputData.FromKey(InputKey.Shift, KeyInputType.KeyDown))
-    .RemapKey(
-        InputData.FromKey(InputKey.Alt, KeyInputType.KeyUp), 
-        InputData.FromKey(InputKey.Shift, KeyInputType.KeyUp));
+    .OnMouseEvent(a => Console.WriteLine(a.Data.Button))
+    .OnMouseEvent(a => Console.WriteLine(a.Data.Type));
 
 macro.Messages.OnMessage += (sender, message) =>
 {

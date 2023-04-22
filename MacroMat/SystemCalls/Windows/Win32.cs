@@ -1200,6 +1200,8 @@ internal static class Win32
     [StructLayout(LayoutKind.Sequential)]
     public struct MOUSEINPUT
     {
+        public const int WHEEL_DELTA = 120;
+        
         public int dx;
         public int dy;
         public int mouseData;
