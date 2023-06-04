@@ -54,7 +54,7 @@ public sealed class Macro : IDisposable
     }
 
     /// <summary>
-    /// Enqueue a new instruction for execution FIFO style.
+    /// Enqueue a new instruction for execution.
     /// </summary>
     /// <param name="instruction"></param>
     public Macro AddInstruction(MacroInstruction instruction)
@@ -90,11 +90,6 @@ public sealed class Macro : IDisposable
         }
 
         return false;
-    }
-
-    public void Clean()
-    {
-        
     }
 
     /// <inheritdoc />

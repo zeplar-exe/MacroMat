@@ -9,14 +9,14 @@ namespace MacroMat.Extensions;
 public static class MacroSimulateExtensions
 {
     /// <summary>
-    /// Enqueue a SimulateKeyInstruction to simulate the specified input.
+    /// Enqueue a SimulateKeyboardInstruction to simulate the specified input.
     /// </summary>
     /// <param name="macro"></param>
     /// <param name="data"></param>
     /// <returns></returns>
     public static Macro SimulateInput(this Macro macro, InputData data)
     {
-        return macro.AddInstruction(new SimulateKeyInstruction(data));
+        return macro.AddInstruction(new SimulateKeyboardInstruction(data));
     }
     
     /// <summary>

@@ -1,8 +1,10 @@
 ["RunMode": "Worker"] 
-# Debug = Run with debug and diagnostics window
+# Debug = Run as debug with diagnostics window
 # Worker = Run as a worker service
 # App = Run as an application
 # TrayApp = Run as an application in the system tray (Windows only)
 
-click "left" at Vector2(50, 50) for Seconds(1)
-
+move_mouse to ScreenPosition(50, 50);
+click MouseButton.Left for Seconds(1);
+# is the same as...
+click MouseButton.Left at ScreenPosition(50, 50) for Seconds(1);

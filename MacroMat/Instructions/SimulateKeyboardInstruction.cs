@@ -7,12 +7,12 @@ namespace MacroMat.Instructions;
 /// <summary>
 /// Instruction to simulate a key event.
 /// </summary>
-public class SimulateKeyInstruction : MacroInstruction
+public class SimulateKeyboardInstruction : MacroInstruction
 {
     private InputData Data { get; }
 
     /// <inheritdoc />
-    public SimulateKeyInstruction(InputData data)
+    public SimulateKeyboardInstruction(InputData data)
     {
         Data = data;
     }
@@ -48,7 +48,7 @@ public class SimulateKeyInstruction : MacroInstruction
                             {
                                 ki = new Win32.KEYBDINPUT
                                 {
-                                    wScan = (Win32.WindowsScanCode)scancode,
+                                    //wScan = (Win32.WindowsScanCode)scancode,
                                     dwFlags = flags,
                                     time = 0
                                 }

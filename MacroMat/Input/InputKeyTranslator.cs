@@ -5,13 +5,42 @@ namespace MacroMat.Input;
 
 internal static class InputKeyTranslator
 {
-    public static byte? CurrentPlatformVirtual(InputKey key)
+    public static Scancode? CurrentPlatformScancode(InputKey key)
     {
-        return new OsSelector<byte?>()
-            .OnWindows(() => (byte?)ToWindowsVirtual(key))
+        return new OsSelector<Scancode?>()
+            .OnWindows(() => ToWindowsScancode(key))
             .Execute();
     }
     
+    public static VirtualKey? CurrentPlatformVirtual(InputKey key)
+    {
+        return new OsSelector<VirtualKey?>()
+            .OnWindows(() =>
+            {
+                var windowsVirtualKey = ToWindowsVirtual(key);
+
+                return windowsVirtualKey == null ? null : VirtualKey.From((byte)windowsVirtualKey.Value);
+            })
+            .Execute();
+    }
+    
+    #region Windows
+    
+    public static Scancode? ToWindowsScancode(InputKey key)
+    {
+        var virtualKey = ToWindowsVirtual(key);
+
+        if (virtualKey == null)
+            return null;
+        
+        var scancode = Win32.MapVirtualKeyEx(
+            (uint)virtualKey.Value, 
+            (uint)Win32.MapVirtualKeyMapTypes.MAPVK_VK_TO_VSC, 
+            IntPtr.Zero);
+
+        return Scancode.From(scancode);
+    }
+
     public static Win32.WindowsVirtualKey? ToWindowsVirtual(InputKey key)
     {
         return key switch
@@ -64,4 +93,6 @@ internal static class InputKeyTranslator
             _ => null
         };
     }
+    
+    #endregion
 }

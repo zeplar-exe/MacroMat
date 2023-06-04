@@ -1,4 +1,5 @@
-﻿using MacroMat.Input;
+﻿using MacroMat.Common;
+using MacroMat.Input;
 using MacroMat.Instructions;
 
 namespace MacroMat.Extensions;
@@ -24,72 +25,84 @@ public static class MacroKeyCallbackExtensions
     {
         return macro.AddInstruction(new KeyCallbackInstruction(predicate, action));
     }
-
+    
     /// <summary>
     /// Enqueue a KeyCallbackInstruction to invoke an action whenever the specified input is
     /// caught.
     /// </summary>
-    public static Macro OnKey(this Macro macro, InputData key, Action<KeyboardEventArgs> action)
+    public static Macro OnKey(this Macro macro, InputKey key, KeyInputType type, Action<KeyboardEventArgs> action)
     {
-        return macro.OnKeyEvent(
+        return OnKeyInternal(macro, key, type, true, action);
+    }
+    
+    public static Macro OnKeyAlternate(this Macro macro, InputKey key, KeyInputType type, Action<KeyboardEventArgs> action)
+    {
+        return OnKeyInternal(macro, key, type, false, action);
+    }
+    
+    private static Macro OnKeyInternal(this Macro macro, InputKey key, KeyInputType type, bool alternate, 
+        Action<KeyboardEventArgs> action)
+    {
+        return OnKeyEvent(macro, 
             data =>
             {
-                if (key.KeyCount != 1)
-                    return false;
-
-                if (key.IsScancode)
+                if (key != InputKey.None)
                 {
-                    // TODO: check against multiple keys?
-                    if (key.Scancodes.First() != data.HardwareScancode)
+                    var virtualCode = InputKeyTranslator.CurrentPlatformVirtual(key);
+
+                    if (virtualCode == null)
+                        return false;
+
+                    if (virtualCode.Value != data.VirtualCode)
                         return false;
                 }
-                else
-                {
-                    var firstKey = key.InputKeys.FirstOrDefault();
 
-                    if (firstKey != InputKey.None)
-                    {
-                        var virtualCode = InputKeyTranslator.CurrentPlatformVirtual(firstKey);
-
-                        if (virtualCode == null)
-                            return false;
-
-                        if (virtualCode != data.VirtualCode)
-                            return false;
-                    }
-                }
-
-                if (key.Type != data.Type)
+                if (type != data.Type)
                     return false;
 
-                if (key.ContainsKey(InputKey.Alt) && !data.IsAlt)
+                if (alternate && !data.IsAlt)
                     return false;
-
-                // TODO: What about other modifiers?
 
                 return true;
             },
             action);
     }
     
+    public static Macro OnInput(this Macro macro, InputData data, Action<KeyboardEventArgs> action)
+    {
+        return macro.Action(actionMacro =>
+        {
+            var os = new OsSelector();
+            
+            os.OnWindows(() =>
+                {
+                    foreach (var key in data.InputKeys)
+                    { // data.IsScancode
+                        InputKeyTranslator.ToWindowsVirtual(key);
+                    }
+                })
+                .Execute();
+        });
+    }
+    
     /// <summary>
     /// Disable the specified key, that is, catching it and not allowing it to
     /// propagate.
     /// </summary>
-    public static Macro DisableKey(this Macro macro, InputData key)
+    public static Macro DisableKey(this Macro macro, InputKey key, KeyInputType type)
     {
-        return macro.OnKey(key, args => args.Handled = true);
+        return OnKey(macro, key, type, args => args.Handled = true);
     }
 
     /// <summary>
     /// Remap a key to another, effectively replacing the input event. Beware of
     /// infinite recursion which can occur by mapping A to B and B to A, for example.
     /// </summary>
-    public static Macro RemapKey(this Macro macro, InputData original, InputData replace)
+    public static Macro RemapKey(this Macro macro, InputKey original, KeyInputType type, InputKey replace)
     {
-        var instruction = new SimulateKeyInstruction(replace);
+        var instruction = new SimulateKeyboardInstruction(InputData.FromKey(replace, type));
         
-        return macro.OnKey(original, 
+        return OnKey(macro, original, type,
             args => 
             {
                 args.Handled = true;
