@@ -78,7 +78,7 @@ internal class WindowsHook : IPlatformHook, IKeyboardHook, IMouseHook
 
         if (Enum.IsDefined(typeof(WindowsKeyboardState), wparamTyped))
         {
-            var keyboardData = (KBDLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(KBDLLHOOKSTRUCT))!;
+            var keyboardData = (Win32.KBDLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(Win32.KBDLLHOOKSTRUCT))!;
             var keyboardState = (WindowsKeyboardState)wparamTyped;
             
             const int injectedBit = 4;
@@ -115,7 +115,7 @@ internal class WindowsHook : IPlatformHook, IKeyboardHook, IMouseHook
 
         if (Enum.IsDefined(typeof(WindowsMouseState), wparamTyped))
         {
-            var mouseData = (MSLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(MSLLHOOKSTRUCT))!;
+            var mouseData = (Win32.MSLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(Win32.MSLLHOOKSTRUCT))!;
             var mouseState = (WindowsMouseState)wparamTyped;
 
             if (mouseState == WindowsMouseState.MouseMove)
