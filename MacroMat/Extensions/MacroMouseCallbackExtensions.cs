@@ -12,6 +12,6 @@ public static class MacroMouseCallbackExtensions
     
     public static Macro OnMouseEvent(this Macro macro, Func<MouseEventData, bool> predicate, Action<MouseEventArgs> action)
     {
-        return macro.AddInstruction(new MouseCallbackInstruction(predicate, action));
+        return macro.EnqueueInstruction(new MouseCallbackInstruction(predicate, action));
     }
 }

@@ -16,7 +16,7 @@ public static class MacroSimulateExtensions
     /// <returns></returns>
     public static Macro SimulateInput(this Macro macro, InputData data)
     {
-        return macro.AddInstruction(new SimulateKeyboardInstruction(data));
+        return macro.EnqueueInstruction(new SimulateKeyboardInstruction(data));
     }
     
     /// <summary>
@@ -33,6 +33,6 @@ public static class MacroSimulateExtensions
         compound.AddInstruction(new SendUnicodeInstruction(s, KeyInputType.KeyDown));
         compound.AddInstruction(new SendUnicodeInstruction(s, KeyInputType.KeyUp));
         
-        return macro.AddInstruction(compound);
+        return macro.EnqueueInstruction(compound);
     }
 }

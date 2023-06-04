@@ -12,7 +12,7 @@ public static class MacroMiscExtensions
     /// </summary>
     public static Macro Action(this Macro macro, Action<Macro> action)
     {
-        return macro.AddInstruction(new ActionInstruction(action));
+        return macro.EnqueueInstruction(new ActionInstruction(action));
     }
 
     /// <summary>

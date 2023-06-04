@@ -23,7 +23,7 @@ public static class MacroKeyCallbackExtensions
     /// </summary>
     public static Macro OnKeyEvent(this Macro macro, Func<KeyboardEventData, bool> predicate, Action<KeyboardEventArgs> action)
     {
-        return macro.AddInstruction(new KeyCallbackInstruction(predicate, action));
+        return macro.EnqueueInstruction(new KeyCallbackInstruction(predicate, action));
     }
     
     /// <summary>

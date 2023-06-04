@@ -12,7 +12,7 @@ public static class MacroWaitExtensions
     /// </summary>
     public static Macro Wait(this Macro macro, int milliseconds)
     {
-        return macro.AddInstruction(new WaitInstruction(TimeSpan.FromMilliseconds(milliseconds)));
+        return macro.EnqueueInstruction(new WaitInstruction(TimeSpan.FromMilliseconds(milliseconds)));
     }
     
     /// <summary>
@@ -20,6 +20,6 @@ public static class MacroWaitExtensions
     /// </summary>
     public static Macro Wait(this Macro macro, TimeSpan time)
     {
-        return macro.AddInstruction(new WaitInstruction(time));
+        return macro.EnqueueInstruction(new WaitInstruction(time));
     }
 }

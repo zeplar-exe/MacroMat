@@ -1,4 +1,5 @@
-﻿using MacroMat.Instructions;
+﻿using MacroMat.Input;
+using MacroMat.Instructions;
 
 namespace MacroMat;
 
@@ -57,7 +58,7 @@ public sealed class Macro : IDisposable
     /// Enqueue a new instruction for execution.
     /// </summary>
     /// <param name="instruction"></param>
-    public Macro AddInstruction(MacroInstruction instruction)
+    public Macro EnqueueInstruction(MacroInstruction instruction)
     {
         Instructions.Enqueue(instruction);
 
