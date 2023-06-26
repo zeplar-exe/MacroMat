@@ -7,7 +7,9 @@ namespace MacroMat.Input;
 /// </summary>
 public readonly struct InputData
 {
-    private Scancode[] Keys { get; }
+    // This is supposed to be an agnostic representation of either
+    // scancodes or InputKey enum values
+    private uint[] Keys { get; }
     
     /// <summary>
     /// The type of input; KeyUp or KeyDown.
@@ -21,7 +23,7 @@ public readonly struct InputData
     /// <summary>
     /// The scancodes present in this input. If <see cref="IsScancode"/> is false, an empty enumerable is returned.
     /// </summary>
-    public IEnumerable<Scancode> Scancodes => IsScancode ? Keys : Enumerable.Empty<Scancode>();
+    public IEnumerable<Scancode> Scancodes => IsScancode ? Keys.Select(Scancode.From) : Enumerable.Empty<Scancode>();
     /// <summary>
     /// The input keys present in this input. If <see cref="IsScancode"/> is true, an empty enumerable is returned.
     /// </summary>
@@ -42,9 +44,9 @@ public readonly struct InputData
     /// <summary>
     /// Create an <see cref="InputData"/> from multiple scancodes with its type and modifier keys.
     /// </summary>
-    public static InputData FromScancodes(Scancode[] scancode, KeyInputType type)
+    public static InputData FromScancodes(IEnumerable<Scancode> scancode, KeyInputType type)
     {
-        return new InputData(scancode, type, true);
+        return new InputData(scancode.Select(s => s.Value).ToArray(), type, true);
     }
 
     /// <summary>
@@ -58,14 +60,12 @@ public readonly struct InputData
     /// <summary>
     /// Create an <see cref="InputData"/> from multiple <see cref="InputKey"/>s with its type and modifier keys.
     /// </summary>
-    public static InputData FromKeys(InputKey[] key, KeyInputType type)
+    public static InputData FromKeys(IEnumerable<InputKey> keys, KeyInputType type)
     {
-        // InputKeyTranslator.ToWindowsScancode()
-        
-        return new InputData(key.Cast<Scancode>().ToArray(), type, false);
+        return new InputData(keys.Cast<uint>().ToArray(), type, false);
     }
 
-    private InputData(Scancode[] keys, KeyInputType type, bool isScancode)
+    private InputData(uint[] keys, KeyInputType type, bool isScancode)
     {
         Keys = keys;
         Type = type;
