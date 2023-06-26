@@ -68,23 +68,6 @@ public static class MacroKeyCallbackExtensions
             action);
     }
     
-    public static Macro OnInput(this Macro macro, InputData data, Action<KeyboardEventArgs> action)
-    {
-        return macro.Action(actionMacro =>
-        {
-            var os = new OsSelector();
-            
-            os.OnWindows(() =>
-                {
-                    foreach (var key in data.InputKeys)
-                    { // data.IsScancode
-                        InputKeyTranslator.ToWindowsVirtual(key);
-                    }
-                })
-                .Execute();
-        });
-    }
-    
     /// <summary>
     /// Disable the specified key, that is, catching it and not allowing it to
     /// propagate.
