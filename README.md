@@ -1,6 +1,9 @@
 # MacroMat
 
-MacroMat is a modern macro and hotkey creation language built with BakedEnv. With MacroMat, you can easily automate repetitive tasks and create custom hotkeys for a wide range of applications.
+MacroMat is a modern macro and hotkey creation language built with BakedEnv to expand upon AutoHotKey's syntax and features.
+
+*badge*
+
 Features.
 
 - Easy to use, intuitive syntax.
@@ -8,15 +11,70 @@ Features.
 - Flexible and extensible design allows for easy integration with other languages and libraries.
 - [Planned] Cross-platform compatibility (Windows, macOS, and Linux).
 
-## Installation
+## Getting Started & Documentation
 
-...
+### C# Library
 
-## Command Line
+#### Installation
 
-...
+The C# library ~~is~~ will be available on [nuget](nuget.org).
 
-See [CLI.md] for more information.
+#### Usage
+
+The library's functionality is primarily exposed via the `Macro` class, which is necessary in order to, well, macro (as a verb).
+
+```cs
+using MacroMat;
+
+Macro macro = new Macro();
+macro.EnqueueInstruction(...);
+
+bool success = macro.ExecuteNext();
+
+// [...]
+```
+
+*Instructions* are the building blocks of a macro. By default, several cross-platform instructions are available in the `MacroMat.Instructions` namespace; `SimulateKeyboardInstruction`, `SimulateMouseInstruction`, `SendUnicodeInstruction`, `KeyCallbackInstruction`, and more.
+
+```cs
+// [...]
+
+var pressA = new SimulateKeyboardInstruction(KeyInputData.FromKey(InputKey.A, KeyInputType.KeyDown));
+var releaseA = new SimulateKeyboardInstruction(KeyInputData.FromKey(InputKey.A, KeyInputType.KeyUp));
+
+macro.EnqueueInstruction(pressA)
+     .EnqueueInstruction(releaseA);
+
+macro.ExecuteAll();
+```
+
+For convenience, several extension methods are available for common operations.
+
+```cs
+using MacroMat.Extensions;
+
+// [...]
+
+macro.SimulateUnicode("Unicode, UTF-8, or is it UTF-16?")
+     .Wait(1000)
+     .Action(() => Console.WriteLine("Checkpoint."))
+     .Wait(500)
+     .SimulateInput(KeyInputData.FromKey(InputKey.Backspace, KeyInputType.KeyDown))
+     .Wait(5000); // Hold down backspace for 5 seocnds
+     .SimulateInput(KeyInputData.FromKey(InputKey.Backspace, KeyInputType.KeyUp))
+```
+
+See the [documentation](example.com) or the extended [Getting Started](example.com) guide.
+
+### Language CLI
+
+#### Installation
+
+The CLI is available under any [release](https://github.com/zeplar-exe/MacroMat/releases) for Windows, Mac, and Linux.
+
+#### Usage
+
+The CLI is not done, at all.
 
 ## Contributing
 
