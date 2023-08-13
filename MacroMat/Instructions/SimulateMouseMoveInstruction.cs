@@ -9,25 +9,33 @@ namespace MacroMat.Instructions;
 /// </summary>
 public class SimulateMouseMoveInstruction : MacroInstruction
 {
-    /// <summary>
-    /// Mouse button to simulate.
-    /// </summary>
-    public MouseButton Button { get; }
-    /// <summary>
-    /// Screen x (left->right) position (usually in pixels) to move the mouse to.
-    /// </summary>
-    public int PositionX { get; }
-    /// <summary>
-    /// Screen y (top->down) position (usually in pixels) to move the mouse to.
-    /// </summary>
-    public int PositionY { get; }
+    private (int X, int Y)[] Positions { get; }
 
     /// <inheritdoc />
-    public SimulateMouseMoveInstruction(MouseButton button, int positionX, int positionY)
+    public SimulateMouseMoveInstruction(int positionX, int positionY)
     {
-        Button = button;
-        PositionX = positionX;
-        PositionY = positionY;
+        Positions = new[] { (positionX, positionY) };
+    }
+
+    public SimulateMouseMoveInstruction(IEnumerable<(int X, int Y)> positions)
+    {
+        Positions = positions.ToArray();
+    }
+    
+    public SimulateMouseMoveInstruction(params (int X, int Y)[] positions)
+    {
+        Positions = positions.ToArray();
+    }
+    
+    public SimulateMouseMoveInstruction(IEnumerable<int[]> positions)
+    {
+        Positions = positions.Select((array, i) =>
+        {
+            if (array.Length != 2)
+                throw new ArgumentException($"Expected int array to contain exactly two integers (index:{i}, [ {string.Join(", ", array)} ])");
+
+            return (array[0], array[1]);
+        }).ToArray();
     }
 
     /// <inheritdoc />
@@ -41,22 +49,29 @@ public class SimulateMouseMoveInstruction : MacroInstruction
             
             os.OnWindows(() =>
             {
-                var input = new Win32.INPUT
+                var inputs = new List<Win32.INPUT>();
+                
+                foreach (var position in Positions)
                 {
-                    type = Win32.InputType.INPUT_MOUSE,
-                    U = new Win32.InputUnion
+                    var input = new Win32.INPUT
                     {
-                        mi = new Win32.MOUSEINPUT
+                        type = Win32.InputType.INPUT_MOUSE,
+                        U = new Win32.InputUnion
                         {
-                            dwFlags = Win32.MOUSEEVENTF.MOVE,
-                            dx = PositionX,
-                            dy = PositionY,
-                            time = 0
+                            mi = new Win32.MOUSEINPUT
+                            {
+                                dwFlags = Win32.MOUSEEVENTF.MOVE,
+                                dx = position.X,
+                                dy = position.Y,
+                                time = 0
+                            }
                         }
-                    }
-                };
+                    };
+                    
+                    inputs.Add(input);
+                }
 
-                var result = Win32.SendInput(1, new[] { input }, Win32.INPUT.Size);
+                var result = Win32.SendInput((uint)inputs.Count, inputs.ToArray(), Win32.INPUT.Size);
                 
                 if (result != 1)
                 {
