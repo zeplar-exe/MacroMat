@@ -9,7 +9,7 @@ public readonly struct InputData
 {
     // This is supposed to be an agnostic representation of either
     // scancodes or InputKey enum values
-    private uint[] Keys { get; }
+    private short[] Keys { get; }
     
     /// <summary>
     /// The type of input; KeyUp or KeyDown.
@@ -62,10 +62,10 @@ public readonly struct InputData
     /// </summary>
     public static InputData FromKeys(IEnumerable<InputKey> keys, KeyInputType type)
     {
-        return new InputData(keys.Cast<uint>().ToArray(), type, false);
+        return new InputData(keys.Cast<short>().ToArray(), type, false);
     }
 
-    private InputData(uint[] keys, KeyInputType type, bool isScancode)
+    private InputData(short[] keys, KeyInputType type, bool isScancode)
     {
         Keys = keys;
         Type = type;

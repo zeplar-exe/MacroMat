@@ -1,9 +1,14 @@
 ﻿using MacroMat;
 using MacroMat.Extensions;
+using MacroMat.Input;
+
+var backslash = InputKeyTranslator.ToWindowsScancode(InputKey.A)!;
 
 var macro = new Macro()
-    .OnMouseEvent(a => Console.WriteLine(a.Data.Button))
-    .OnMouseEvent(a => Console.WriteLine(a.Data.Type));
+    .Wait(1500)
+    .SimulateInput(InputData.FromScancode(backslash.Value, KeyInputType.KeyDown))
+    .Wait(1000)
+    .SimulateInput(InputData.FromScancode(backslash.Value, KeyInputType.KeyUp));
 
 macro.Messages.OnMessage += (sender, message) =>
 {

@@ -2,7 +2,7 @@
 
 namespace MacroMat.Common;
 
-[ValueObject<uint>]
+[ValueObject<short>]
 public partial struct Scancode
 {
     

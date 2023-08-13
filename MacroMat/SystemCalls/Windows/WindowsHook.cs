@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
+using MacroMat.Common;
 using MacroMat.Input;
 
 namespace MacroMat.SystemCalls.Windows;
@@ -94,8 +95,8 @@ internal class WindowsHook : IPlatformHook, IKeyboardHook, IMouseHook
             };
             
             var eventData = new KeyboardEventData(
-                keyboardData.HardwareScanCode,
-                keyboardData.VirtualCode,
+                Scancode.From((short)keyboardData.HardwareScanCode),
+                VirtualKey.From(keyboardData.VirtualCode),
                 inputType, isInjected,
                 keyboardState is WindowsKeyboardState.SysKeyUp or WindowsKeyboardState.SysKeyDown);
 

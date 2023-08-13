@@ -1,5 +1,7 @@
 ﻿using System.Text;
 
+using MacroMat.Common;
+
 namespace MacroMat.Input;
 
 /// <summary>
@@ -10,11 +12,11 @@ public class KeyboardEventData
     /// <summary>
     /// Hardware-dependant scancode.
     /// </summary>
-    public int HardwareScancode { get; }
+    public Scancode HardwareScancode { get; }
     /// <summary>
     /// OS-dependant virtual code.
     /// </summary>
-    public byte VirtualCode { get; }
+    public VirtualKey VirtualCode { get; }
     /// <summary>
     /// Input type of this keyboard event. 
     /// </summary>
@@ -28,7 +30,7 @@ public class KeyboardEventData
     /// </summary>
     public bool IsAlt { get; }
 
-    internal KeyboardEventData(int hardwareScancode, byte virtualCode, KeyInputType type, bool isInjected, bool isAlt)
+    internal KeyboardEventData(Scancode hardwareScancode, VirtualKey virtualCode, KeyInputType type, bool isInjected, bool isAlt)
     {
         HardwareScancode = hardwareScancode;
         VirtualCode = virtualCode;

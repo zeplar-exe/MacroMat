@@ -48,7 +48,7 @@ public class SimulateKeyboardInstruction : MacroInstruction
                             {
                                 ki = new Win32.KEYBDINPUT
                                 {
-                                    //wScan = (Win32.WindowsScanCode)scancode,
+                                    wScan = (Win32.WindowsScanCode)scancode.Value,
                                     dwFlags = flags,
                                     time = 0
                                 }
