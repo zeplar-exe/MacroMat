@@ -14,7 +14,7 @@ public static class MacroSimulateExtensions
     /// <param name="macro"></param>
     /// <param name="data"></param>
     /// <returns></returns>
-    public static Macro SimulateInput(this Macro macro, InputData data)
+    public static Macro SimulateInput(this Macro macro, KeyInputData data)
     {
         return macro.EnqueueInstruction(new SimulateKeyboardInstruction(data));
     }

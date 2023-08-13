@@ -6,9 +6,9 @@ var backslash = InputKeyTranslator.ToWindowsScancode(InputKey.A)!;
 
 var macro = new Macro()
     .Wait(1500)
-    .SimulateInput(InputData.FromScancode(backslash.Value, KeyInputType.KeyDown))
+    .SimulateInput(KeyInputData.FromScancode(backslash.Value, KeyInputType.KeyDown))
     .Wait(1000)
-    .SimulateInput(InputData.FromScancode(backslash.Value, KeyInputType.KeyUp));
+    .SimulateInput(KeyInputData.FromScancode(backslash.Value, KeyInputType.KeyUp));
 
 macro.Messages.OnMessage += (sender, message) =>
 {

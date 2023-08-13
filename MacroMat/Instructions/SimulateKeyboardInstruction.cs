@@ -9,10 +9,10 @@ namespace MacroMat.Instructions;
 /// </summary>
 public class SimulateKeyboardInstruction : MacroInstruction
 {
-    private InputData Data { get; }
+    private KeyInputData Data { get; }
 
     /// <inheritdoc />
-    public SimulateKeyboardInstruction(InputData data)
+    public SimulateKeyboardInstruction(KeyInputData data)
     {
         Data = data;
     }

@@ -1,7 +1,7 @@
 ﻿namespace MacroMat.Input;
 
 /// <summary>
-/// Type specifier for <see cref="InputData"/>.
+/// Type specifier for <see cref="KeyInputData"/>.
 /// </summary>
 public enum KeyInputType
 {

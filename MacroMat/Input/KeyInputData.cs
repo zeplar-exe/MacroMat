@@ -5,7 +5,7 @@ namespace MacroMat.Input;
 /// <summary>
 /// Cross-platform representation of input.
 /// </summary>
-public readonly struct InputData
+public readonly struct KeyInputData
 {
     // This is supposed to be an agnostic representation of either
     // scancodes or InputKey enum values
@@ -34,38 +34,38 @@ public readonly struct InputData
     public int KeyCount => Keys.Length;
    
     /// <summary>
-    /// Create an <see cref="InputData"/> from a single scancode with its type and modifier keys.
+    /// Create an <see cref="KeyInputData"/> from a single scancode with its type and modifier keys.
     /// </summary>
-    public static InputData FromScancode(Scancode scancode, KeyInputType type)
+    public static KeyInputData FromScancode(Scancode scancode, KeyInputType type)
     {
         return FromScancodes(new[] { scancode }, type);
     }
     
     /// <summary>
-    /// Create an <see cref="InputData"/> from multiple scancodes with its type and modifier keys.
+    /// Create an <see cref="KeyInputData"/> from multiple scancodes with its type and modifier keys.
     /// </summary>
-    public static InputData FromScancodes(IEnumerable<Scancode> scancode, KeyInputType type)
+    public static KeyInputData FromScancodes(IEnumerable<Scancode> scancode, KeyInputType type)
     {
-        return new InputData(scancode.Select(s => s.Value).ToArray(), type, true);
+        return new KeyInputData(scancode.Select(s => s.Value).ToArray(), type, true);
     }
 
     /// <summary>
-    /// Create an <see cref="InputData"/> from a single <see cref="InputKey"/> with its type and modifier keys.
+    /// Create an <see cref="KeyInputData"/> from a single <see cref="InputKey"/> with its type and modifier keys.
     /// </summary>
-    public static InputData FromKey(InputKey key, KeyInputType type)
+    public static KeyInputData FromKey(InputKey key, KeyInputType type)
     {
         return FromKeys(new[] { key }, type);
     }
     
     /// <summary>
-    /// Create an <see cref="InputData"/> from multiple <see cref="InputKey"/>s with its type and modifier keys.
+    /// Create an <see cref="KeyInputData"/> from multiple <see cref="InputKey"/>s with its type and modifier keys.
     /// </summary>
-    public static InputData FromKeys(IEnumerable<InputKey> keys, KeyInputType type)
+    public static KeyInputData FromKeys(IEnumerable<InputKey> keys, KeyInputType type)
     {
-        return new InputData(keys.Cast<short>().ToArray(), type, false);
+        return new KeyInputData(keys.Cast<short>().ToArray(), type, false);
     }
 
-    private InputData(short[] keys, KeyInputType type, bool isScancode)
+    private KeyInputData(short[] keys, KeyInputType type, bool isScancode)
     {
         Keys = keys;
         Type = type;
