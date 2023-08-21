@@ -4,8 +4,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MacroMat", "MacroMat\MacroM
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MacroMat.Tests", "MacroMat.Tests\MacroMat.Tests.csproj", "{BBF1DE94-86EB-4DFD-B315-DD77D2D5CF33}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MacroMat.ConsoleTest", "MacroMat.ConsoleTest\MacroMat.ConsoleTest.csproj", "{3C453194-2EC3-4FB9-B668-30586C718413}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MacroMat.CLI", "MacroMat.CLI\MacroMat.CLI.csproj", "{9EF05558-5658-4850-A33F-9A50AFA5E8C8}"
 EndProject
 Global
@@ -22,10 +20,6 @@ Global
 		{BBF1DE94-86EB-4DFD-B315-DD77D2D5CF33}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BBF1DE94-86EB-4DFD-B315-DD77D2D5CF33}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BBF1DE94-86EB-4DFD-B315-DD77D2D5CF33}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3C453194-2EC3-4FB9-B668-30586C718413}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3C453194-2EC3-4FB9-B668-30586C718413}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3C453194-2EC3-4FB9-B668-30586C718413}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3C453194-2EC3-4FB9-B668-30586C718413}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9EF05558-5658-4850-A33F-9A50AFA5E8C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9EF05558-5658-4850-A33F-9A50AFA5E8C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9EF05558-5658-4850-A33F-9A50AFA5E8C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
