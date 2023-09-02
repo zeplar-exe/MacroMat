@@ -9,7 +9,6 @@ namespace MacroMat;
 public sealed class Macro : IDisposable
 {
     internal MacroListener Listener { get; }
-    private Queue<MacroInstruction> Instructions { get; }
     
     /// <summary>
     /// Log messages created by the macro and its internal processes.
@@ -30,7 +29,6 @@ public sealed class Macro : IDisposable
     {
         Messages = new MessageReporter();
         Listener = new MacroListener(Messages);
-        Instructions = new Queue<MacroInstruction>();
 
         if (autoInitialize)
             Initialize();
@@ -52,45 +50,6 @@ public sealed class Macro : IDisposable
         
         IsInitialized = true;
         Listener.Start();
-    }
-
-    /// <summary>
-    /// Enqueue a new instruction for execution.
-    /// </summary>
-    /// <param name="instruction"></param>
-    public Macro EnqueueInstruction(MacroInstruction instruction)
-    {
-        Instructions.Enqueue(instruction);
-
-        return this;
-    }
-    
-    /// <summary>
-    /// Execute all queued instructions one-by-one.
-    /// </summary>
-    public void ExecuteAll()
-    {
-        while (ExecuteNext())
-        {
-            
-        }
-    }
-
-    /// <summary>
-    /// Execute the next queued instruction.
-    /// </summary>
-    /// <returns>Whether an instruction was executed; that is,
-    /// a value of false indicates no more instructions to execute.</returns>
-    public bool ExecuteNext()
-    {
-        if (Instructions.TryDequeue(out var instruction))
-        {
-            instruction.Execute(this);
-
-            return true;
-        }
-
-        return false;
     }
 
     /// <inheritdoc />
