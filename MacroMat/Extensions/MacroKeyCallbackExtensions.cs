@@ -85,7 +85,8 @@ public static class MacroKeyCallbackExtensions
     /// </summary>
     public static Macro RemapKey(this Macro macro, InputKey original, KeyInputType type, InputKey replace)
     {
-        var instruction = new SimulateKeyboardInstruction(KeyInputData.FromKey(replace, type));
+        var virtualKey = VirtualKey.Of(replace);
+        var instruction = new SimulateKeyboardInstruction(KeyInputData.Press(virtualKey));
         
         return OnKey(macro, original, type,
             args => 

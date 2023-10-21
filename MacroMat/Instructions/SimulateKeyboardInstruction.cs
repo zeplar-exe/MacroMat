@@ -39,70 +39,55 @@ public class SimulateKeyboardInstruction : MacroInstruction
                 {
                     flags |= Win32.KEYBDEVENTF.SCANCODE;
                     
-                    foreach (var scancode in Data.Scancodes)
+                    foreach (var key in Data.Keys)
                     {
-                        var input = new Win32.INPUT
+                        if (key is Scancode scancode)
                         {
-                            type = Win32.InputType.INPUT_KEYBOARD,
-                            U = new Win32.InputUnion
+                            var input = new Win32.INPUT
                             {
-                                ki = new Win32.KEYBDINPUT
+                                type = Win32.InputType.INPUT_KEYBOARD,
+                                U = new Win32.InputUnion
                                 {
-                                    wScan = (Win32.WindowsScanCode)scancode.Value,
-                                    dwFlags = flags,
-                                    time = 0
+                                    ki = new Win32.KEYBDINPUT
+                                    {
+                                        wScan = (Win32.WindowsScanCode)scancode.Value,
+                                        dwFlags = flags,
+                                        time = 0
+                                    }
                                 }
-                            }
-                        };
+                            };
+                            
+                            inputs.Add(input);
+                        }
+                        else if (key is VirtualKey virtualKey)
+                        {
+                            var virtualKeyScancode = Win32.MapVirtualKeyEx(
+                                (uint)virtualKey.Value, 
+                                (uint)Win32.MapVirtualKeyMapTypes.MAPVK_VK_TO_VSC, 
+                                IntPtr.Zero);
                         
-                        inputs.Add(input);
+                            var input = new Win32.INPUT
+                            {
+                                type = Win32.InputType.INPUT_KEYBOARD,
+                                U = new Win32.InputUnion
+                                {
+                                    ki = new Win32.KEYBDINPUT
+                                    {
+                                        wVk = virtualKey.Value,
+                                        wScan = (Win32.WindowsScanCode)virtualKeyScancode,
+                                        dwFlags = flags,
+                                        time = 0
+                                    }
+                                }
+                            };
+                            
+                            inputs.Add(input);
+                        }
                     }
                 }
                 else
                 {
-                    var virtualKeys = new List<Win32.WindowsVirtualKey>();
                     
-                    foreach (var key in Data.InputKeys)
-                    {
-                        if (key == InputKey.None)
-                            continue;
-                        
-                        var virtualKey = InputKeyTranslator.ToWindowsVirtual(key);
-
-                        if (virtualKey == null)
-                        {
-                            macro.Messages.Log($"'{key}' does not have a Windows virtual key equivalent.");
-                        
-                            continue;
-                        }
-                    
-                        virtualKeys.Add(virtualKey.Value);
-                    }
-                    
-                    foreach (var virtualKey in virtualKeys)
-                    {
-                        var scancode = Win32.MapVirtualKeyEx(
-                            (uint)virtualKey, 
-                            (uint)Win32.MapVirtualKeyMapTypes.MAPVK_VK_TO_VSC, 
-                            IntPtr.Zero);
-                        
-                        var input = new Win32.INPUT
-                        {
-                            type = Win32.InputType.INPUT_KEYBOARD,
-                            U = new Win32.InputUnion
-                            {
-                                ki = new Win32.KEYBDINPUT
-                                {
-                                    wVk = virtualKey,
-                                    wScan = (Win32.WindowsScanCode)scancode,
-                                    dwFlags = flags,
-                                    time = 0
-                                }
-                            }
-                        };
-                        
-                        inputs.Add(input);
-                    }
                 }
 
                 // Note to self:

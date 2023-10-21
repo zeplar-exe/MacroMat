@@ -12,14 +12,14 @@ internal static class InputKeyTranslator
             .Execute();
     }
     
-    public static VirtualKey? CurrentPlatformVirtual(InputKey key)
+    public static VirtualKey CurrentPlatformVirtual(InputKey key)
     {
         return new OsSelector<VirtualKey?>()
             .OnWindows(() =>
             {
                 var windowsVirtualKey = ToWindowsVirtual(key);
 
-                return windowsVirtualKey == null ? null : VirtualKey.From((byte)windowsVirtualKey.Value);
+                return VirtualKey.From((byte)windowsVirtualKey.Value);
             })
             .Execute();
     }
@@ -140,11 +140,11 @@ internal static class InputKeyTranslator
             InputKey.LeftControl => Scancode.From(0xA2),
             InputKey.RightControl => Scancode.From(0xA3),
             _ => throw new ArgumentOutOfRangeException(
-                $"The InputKey {key} does not have a valid scancode equivalent on Windows.")
+                $"{key} does not have a valid scancode equivalent on Windows.")
         };
     }
 
-    public static Win32.WindowsVirtualKey? ToWindowsVirtual(InputKey key)
+    public static Win32.WindowsVirtualKey ToWindowsVirtual(InputKey key)
     {
         // https://learn.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
         
@@ -257,7 +257,8 @@ internal static class InputKeyTranslator
             InputKey.GreaterThan => Win32.WindowsVirtualKey.OEM_PERIOD,
             InputKey.Slash => Win32.WindowsVirtualKey.DIVIDE,
             InputKey.QuestionMark => Win32.WindowsVirtualKey.OEM_2,
-            _ => throw new ArgumentOutOfRangeException(nameof(key), key, null)
+            _ => throw new ArgumentOutOfRangeException(
+                $"{key} does not have a valid virtual key equivalent on Windows.")
         };
     }
     
