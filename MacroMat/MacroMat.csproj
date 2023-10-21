@@ -12,7 +12,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Vogen" Version="3.0.18" />
+      <PackageReference Include="Vogen" Version="3.0.21" />
     </ItemGroup>
 
 </Project>
