@@ -98,7 +98,7 @@ internal class WindowsHook : IPlatformHook, IKeyboardHook, IMouseHook
                 Scancode.From((short)keyboardData.HardwareScanCode),
                 VirtualKey.From(keyboardData.VirtualCode),
                 inputType, isInjected,
-                keyboardState is WindowsKeyboardState.SysKeyUp or WindowsKeyboardState.SysKeyDown);
+                keyboardState is WindowsKeyboardState.SysKeyDown);
 
             var args = new KeyboardEventArgs(eventData);
             
