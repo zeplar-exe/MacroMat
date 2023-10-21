@@ -5,9 +5,9 @@ namespace MacroMat.Input;
 
 internal static class InputKeyTranslator
 {
-    public static Scancode? CurrentPlatformScancode(InputKey key)
+    public static Scancode CurrentPlatformScancode(InputKey key)
     {
-        return new OsSelector<Scancode?>()
+        return new OsSelector<Scancode>()
             .OnWindows(() => ToWindowsScancode(key))
             .Execute();
     }
@@ -26,7 +26,7 @@ internal static class InputKeyTranslator
     
     #region Windows
     
-    public static Scancode? ToWindowsScancode(InputKey key)
+    public static Scancode ToWindowsScancode(InputKey key)
     {
         // https://docs.google.com/spreadsheets/d/1GSj0gKDxyWAecB3SIyEZ2ssPETZkkxn67gdIwL1zFUs/edit#gid=0
         
@@ -139,7 +139,8 @@ internal static class InputKeyTranslator
             InputKey.Control => Scancode.From(0x11),
             InputKey.LeftControl => Scancode.From(0xA2),
             InputKey.RightControl => Scancode.From(0xA3),
-            _ => throw new ArgumentOutOfRangeException(nameof(key), key, null)
+            _ => throw new ArgumentOutOfRangeException(
+                $"The InputKey {key} does not have a valid scancode equivalent on Windows.")
         };
     }
 
