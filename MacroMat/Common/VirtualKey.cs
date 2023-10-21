@@ -11,8 +11,8 @@ public partial struct VirtualKey : IKeyRepresentation
         return InputKeyTranslator.CurrentPlatformVirtual(key);
     }
     
-    public static VirtualKey[] Of(params InputKey[] keys)
+    public static IEnumerable<IKeyRepresentation> Of(params InputKey[] keys)
     {
-        return keys.Select(InputKeyTranslator.CurrentPlatformVirtual).ToArray();
+        return keys.Select(InputKeyTranslator.CurrentPlatformVirtual).Cast<IKeyRepresentation>().ToArray();
     }
 }

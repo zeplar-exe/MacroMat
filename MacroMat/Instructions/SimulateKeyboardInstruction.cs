@@ -35,59 +35,52 @@ public class SimulateKeyboardInstruction : MacroInstruction
 
                 var inputs = new List<Win32.INPUT>();
 
-                if (Data.IsScancode)
+                flags |= Win32.KEYBDEVENTF.SCANCODE;
+                
+                foreach (var key in Data.Keys)
                 {
-                    flags |= Win32.KEYBDEVENTF.SCANCODE;
-                    
-                    foreach (var key in Data.Keys)
+                    if (key is Scancode scancode)
                     {
-                        if (key is Scancode scancode)
+                        var input = new Win32.INPUT
                         {
-                            var input = new Win32.INPUT
+                            type = Win32.InputType.INPUT_KEYBOARD,
+                            U = new Win32.InputUnion
                             {
-                                type = Win32.InputType.INPUT_KEYBOARD,
-                                U = new Win32.InputUnion
+                                ki = new Win32.KEYBDINPUT
                                 {
-                                    ki = new Win32.KEYBDINPUT
-                                    {
-                                        wScan = (Win32.WindowsScanCode)scancode.Value,
-                                        dwFlags = flags,
-                                        time = 0
-                                    }
+                                    wScan = (Win32.WindowsScanCode)scancode.Value,
+                                    dwFlags = flags,
+                                    time = 0
                                 }
-                            };
-                            
-                            inputs.Add(input);
-                        }
-                        else if (key is VirtualKey virtualKey)
-                        {
-                            var virtualKeyScancode = Win32.MapVirtualKeyEx(
-                                (uint)virtualKey.Value, 
-                                (uint)Win32.MapVirtualKeyMapTypes.MAPVK_VK_TO_VSC, 
-                                IntPtr.Zero);
+                            }
+                        };
                         
-                            var input = new Win32.INPUT
-                            {
-                                type = Win32.InputType.INPUT_KEYBOARD,
-                                U = new Win32.InputUnion
-                                {
-                                    ki = new Win32.KEYBDINPUT
-                                    {
-                                        wVk = virtualKey.Value,
-                                        wScan = (Win32.WindowsScanCode)virtualKeyScancode,
-                                        dwFlags = flags,
-                                        time = 0
-                                    }
-                                }
-                            };
-                            
-                            inputs.Add(input);
-                        }
+                        inputs.Add(input);
                     }
-                }
-                else
-                {
+                    else if (key is VirtualKey virtualKey)
+                    {
+                        var virtualKeyScancode = Win32.MapVirtualKeyEx(
+                            (uint)virtualKey.Value, 
+                            (uint)Win32.MapVirtualKeyMapTypes.MAPVK_VK_TO_VSC, 
+                            IntPtr.Zero);
                     
+                        var input = new Win32.INPUT
+                        {
+                            type = Win32.InputType.INPUT_KEYBOARD,
+                            U = new Win32.InputUnion
+                            {
+                                ki = new Win32.KEYBDINPUT
+                                {
+                                    wVk = (Win32.WindowsVirtualKey)virtualKey.Value,
+                                    wScan = (Win32.WindowsScanCode)virtualKeyScancode,
+                                    dwFlags = flags,
+                                    time = 0
+                                }
+                            }
+                        };
+                        
+                        inputs.Add(input);
+                    }
                 }
 
                 // Note to self:

@@ -11,8 +11,8 @@ public partial struct Scancode : IKeyRepresentation
         return InputKeyTranslator.CurrentPlatformScancode(key);
     }
     
-    public static Scancode[] Of(params InputKey[] keys)
+    public static IEnumerable<IKeyRepresentation> Of(params InputKey[] keys)
     {
-        return keys.Select(InputKeyTranslator.CurrentPlatformScancode).ToArray();
+        return keys.Select(InputKeyTranslator.CurrentPlatformScancode).Cast<IKeyRepresentation>().ToArray();
     }
 }

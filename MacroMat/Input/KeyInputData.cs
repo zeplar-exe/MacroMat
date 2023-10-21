@@ -35,7 +35,17 @@ public readonly struct KeyInputData
         return new KeyInputData(keys.ToArray(), KeyInputType.KeyDown);
     }
     
+    public static KeyInputData Press(IEnumerable<IKeyRepresentation> keys)
+    {
+        return new KeyInputData(keys.ToArray(), KeyInputType.KeyDown);
+    }
+    
     public static KeyInputData Release(params IKeyRepresentation[] keys)
+    {
+        return new KeyInputData(keys.ToArray(), KeyInputType.KeyUp);
+    }
+    
+    public static KeyInputData Release(IEnumerable<IKeyRepresentation> keys)
     {
         return new KeyInputData(keys.ToArray(), KeyInputType.KeyUp);
     }
@@ -44,6 +54,11 @@ public readonly struct KeyInputData
     {
         Keys = keys;
         Type = type;
+    }
+
+    public bool ContainsKey(IKeyRepresentation key)
+    {
+        return Keys.Contains(key);
     }
 
     public bool ContainsScancode(Scancode code)
