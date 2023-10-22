@@ -2,18 +2,18 @@
 
 namespace MacroMat.Input;
 
-public class MouseInputData
+public class MouseButtonInputData
 {
     public IReadOnlyCollection<MouseButton> Buttons { get; }
-    public MouseInputType Type { get; }
+    public MouseButtonInputType Type { get; }
     
-    public MouseInputData(MouseButton button, MouseInputType type)
+    public MouseButtonInputData(MouseButton button, MouseButtonInputType type)
     {
         Buttons = new ReadOnlyCollection<MouseButton>(new[] { button });
         Type = type;
     }
 
-    public MouseInputData(IEnumerable<MouseButton> buttons, MouseInputType type)
+    public MouseButtonInputData(IEnumerable<MouseButton> buttons, MouseButtonInputType type)
     {
         Buttons = buttons.ToList().AsReadOnly();
         Type = type;

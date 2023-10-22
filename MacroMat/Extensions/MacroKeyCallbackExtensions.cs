@@ -51,10 +51,7 @@ public static class MacroKeyCallbackExtensions
                 if (key != InputKey.None)
                 {
                     var virtualCode = InputKeyTranslator.CurrentPlatformVirtual(key);
-
-                    if (virtualCode == null)
-                        return false;
-
+                    
                     if (virtualCode.Value != data.VirtualCode)
                         return false;
                 }

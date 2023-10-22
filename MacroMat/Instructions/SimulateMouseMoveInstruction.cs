@@ -1,4 +1,7 @@
-﻿using MacroMat.Common;
+﻿using System.Runtime.InteropServices;
+using Windows.Win32;
+using Windows.Win32.UI.Input.KeyboardAndMouse;
+using MacroMat.Common;
 using MacroMat.Input;
 using MacroMat.SystemCalls.Windows;
 
@@ -49,34 +52,41 @@ public class SimulateMouseMoveInstruction : MacroInstruction
             
             os.OnWindows(() =>
             {
-                var inputs = new List<Win32.INPUT>();
-                
-                foreach (var position in Positions)
+                var inputs = new INPUT[Positions.Length];
+
+                for (var index = 0; index < Positions.Length; index++)
                 {
-                    var input = new Win32.INPUT
+                    var position = Positions[index];
+                    var input = new INPUT
                     {
-                        type = Win32.InputType.INPUT_MOUSE,
-                        U = new Win32.InputUnion
+                        type = INPUT_TYPE.INPUT_MOUSE,
+                        Anonymous = new INPUT._Anonymous_e__Union
                         {
-                            mi = new Win32.MOUSEINPUT
+                            mi = new MOUSEINPUT
                             {
-                                dwFlags = Win32.MOUSEEVENTF.MOVE,
+                                dwFlags = MOUSE_EVENT_FLAGS.MOUSEEVENTF_MOVE,
                                 dx = position.X,
                                 dy = position.Y,
                                 time = 0
                             }
                         }
                     };
-                    
-                    inputs.Add(input);
+
+                    inputs[index] = input;
                 }
 
-                var result = Win32.SendInput((uint)inputs.Count, inputs.ToArray(), Win32.INPUT.Size);
-                
-                if (result != 1)
+                unsafe
                 {
-                    WindowsHelper.HandleError(e => 
-                        macro.Messages.Error($"Simulate Mouse Move Error: [{e.NativeErrorCode}] {e.Message}"));
+                    fixed (INPUT* inputsPtr = &inputs[0])
+                    {
+                        var result = PInvoke.SendInput((uint)inputs.Length, inputsPtr, Marshal.SizeOf<INPUT>());
+
+                        if (result != 1)
+                        {
+                            WindowsHelper.HandleError(e =>
+                                macro.Messages.Error($"Simulate Mouse Move Error: [{e.NativeErrorCode}] {e.Message}"));
+                        }
+                    }
                 }
             }).Execute();
         });

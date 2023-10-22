@@ -1,4 +1,7 @@
-﻿using MacroMat.Common;
+﻿using System.Runtime.InteropServices;
+using Windows.Win32;
+using Windows.Win32.UI.Input.KeyboardAndMouse;
+using MacroMat.Common;
 using MacroMat.Input;
 using MacroMat.SystemCalls.Windows;
 
@@ -36,39 +39,47 @@ public class SendUnicodeInstruction : MacroInstruction
 
             os.OnWindows(() =>
             {
-                var inputs = new List<Win32.INPUT>();
-                var flags = Win32.KEYBDEVENTF.UNICODE;
+                var inputs = new INPUT[UnicodeString.Length];
+                var flags = KEYBD_EVENT_FLAGS.KEYEVENTF_UNICODE;
 
                 if (Type == KeyInputType.KeyUp)
-                    flags |= Win32.KEYBDEVENTF.KEYUP;
+                    flags |= KEYBD_EVENT_FLAGS.KEYEVENTF_KEYUP;
+
+                var index = 0;
                 
-                foreach (var code in UnicodeString.Select(Convert.ToInt32))
+                foreach (var code in UnicodeString.Select(Convert.ToUInt16))
                 {
-                    var input = new Win32.INPUT
+                    var input = new INPUT
                     {
-                        type = Win32.InputType.INPUT_KEYBOARD,
-                        U = new Win32.InputUnion
+                        type = INPUT_TYPE.INPUT_KEYBOARD,
+                        Anonymous = new INPUT._Anonymous_e__Union
                         {
-                            ki = new Win32.KEYBDINPUT
+                            ki = new KEYBDINPUT
                             {
                                 wVk = 0,
-                                wScan = (Win32.WindowsScanCode)code,
+                                wScan = code,
                                 dwFlags = flags,
                                 time = 0
                             }
                         }
                     };
                         
-                    inputs.Add(input);
+                    inputs[index++] = input;
                 }
 
-                var items = inputs.ToArray();
-                var result = Win32.SendInput((uint)items.Length, items, Win32.INPUT.Size);
-
-                if (result != items.Length)
+                unsafe
                 {
-                    WindowsHelper.HandleError(e => 
-                        macro.Messages.Error($"Simulate Key Error: [{e.NativeErrorCode}] {e.Message}"));
+                    fixed (INPUT* inputPtr = &inputs[0])
+                    {
+                        var items = inputs.ToArray();
+                        var result = PInvoke.SendInput((uint)items.Length, inputPtr, Marshal.SizeOf<INPUT>());
+
+                        if (result != items.Length)
+                        {
+                            WindowsHelper.HandleError(e => 
+                                macro.Messages.Error($"Simulate Key Error: [{e.NativeErrorCode}] {e.Message}"));
+                        } 
+                    }
                 }
             }).Execute();
         });

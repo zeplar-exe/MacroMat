@@ -3,7 +3,7 @@ using Vogen;
 
 namespace MacroMat.Common;
 
-[ValueObject<short>]
+[ValueObject<ushort>]
 public partial struct Scancode : IKeyRepresentation
 {
     public static Scancode Of(InputKey key)

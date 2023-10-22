@@ -6,8 +6,6 @@ internal abstract class MessageLoop
     protected Queue<Action> RequestedActions { get; }
 
     public bool IsRunning { get; protected set; }
-    
-    public abstract IntPtr Handle { get; }
 
     protected MessageLoop(Action? initialAction)
     {

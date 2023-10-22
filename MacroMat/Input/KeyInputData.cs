@@ -7,9 +7,7 @@ namespace MacroMat.Input;
 /// </summary>
 public readonly struct KeyInputData
 {
-    // This is supposed to be an agnostic representation of either
-    // scancodes or InputKey enum values
-    internal IKeyRepresentation[] Keys { get; }
+    public IReadOnlyCollection<IKeyRepresentation> Keys { get; }
     
     /// <summary>
     /// The type of input; KeyUp or KeyDown.
@@ -17,40 +15,40 @@ public readonly struct KeyInputData
     public KeyInputType Type { get; }
 
     /// <summary>
-    /// The scancodes present in this input. If <see cref="IsScancode"/> is false, an empty enumerable is returned.
+    /// The scancodes present in this input.
     /// </summary>
     public IEnumerable<Scancode> Scancodes => Keys.OfType<Scancode>();
 
     /// <summary>
-    /// The input keys present in this input. If <see cref="IsScancode"/> is true, an empty enumerable is returned.
+    /// The input keys present in this input.
     /// </summary>
     public IEnumerable<VirtualKey> VirtualKeys => Keys.OfType<VirtualKey>();
     /// <summary>
     /// The number of keys present in this input.
     /// </summary>
-    public int KeyCount => Keys.Length;
+    public int KeyCount => Keys.Count;
 
     public static KeyInputData Press(params IKeyRepresentation[] keys)
     {
-        return new KeyInputData(keys.ToArray(), KeyInputType.KeyDown);
+        return new KeyInputData(keys.ToArray().AsReadOnly(), KeyInputType.KeyDown);
     }
     
     public static KeyInputData Press(IEnumerable<IKeyRepresentation> keys)
     {
-        return new KeyInputData(keys.ToArray(), KeyInputType.KeyDown);
+        return new KeyInputData(keys.ToArray().AsReadOnly(), KeyInputType.KeyDown);
     }
     
     public static KeyInputData Release(params IKeyRepresentation[] keys)
     {
-        return new KeyInputData(keys.ToArray(), KeyInputType.KeyUp);
+        return new KeyInputData(keys.ToArray().AsReadOnly(), KeyInputType.KeyUp);
     }
     
     public static KeyInputData Release(IEnumerable<IKeyRepresentation> keys)
     {
-        return new KeyInputData(keys.ToArray(), KeyInputType.KeyUp);
+        return new KeyInputData(keys.ToArray().AsReadOnly(), KeyInputType.KeyUp);
     }
 
-    private KeyInputData(IKeyRepresentation[] keys, KeyInputType type)
+    private KeyInputData(IReadOnlyCollection<IKeyRepresentation> keys, KeyInputType type)
     {
         Keys = keys;
         Type = type;

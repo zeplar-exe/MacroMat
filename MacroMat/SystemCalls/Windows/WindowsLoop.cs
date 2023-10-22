@@ -1,10 +1,14 @@
-﻿namespace MacroMat.SystemCalls.Windows;
+﻿using Windows.Win32;
+using Windows.Win32.Foundation;
+using Windows.Win32.UI.WindowsAndMessaging;
+
+namespace MacroMat.SystemCalls.Windows;
 
 internal class WindowsLoop : MessageLoop
 {
     private Thread? Thread { get; set; }
     
-    public override IntPtr Handle => IntPtr.Zero;
+    public HWND Handle => new(IntPtr.Zero);
 
     public WindowsLoop(Action? initialAction) : base(initialAction)
     {
@@ -17,20 +21,20 @@ internal class WindowsLoop : MessageLoop
         
         Thread = new Thread(() =>
         {
-            IntPtr? timerId = null;
+            UIntPtr? timerId = null;
             
             try
             {
                 InitialAction?.Invoke();
 
-                timerId = Win32.SetTimer(Handle, IntPtr.Zero, 100, IntPtr.Zero);
+                timerId = PInvoke.SetTimer(Handle, 0, 100, null);
 
                 while (IsRunning)
                 {
                     if (RequestedActions.TryDequeue(out var requested))
                         requested.Invoke();
                     
-                    var result = Win32.GetMessage(out var message, Handle, 0, 0);
+                    var result = PInvoke.GetMessage(out var message, Handle, 0, 0);
 
                     if (result <= 0)
                     {
@@ -39,8 +43,8 @@ internal class WindowsLoop : MessageLoop
                         continue;
                     }
                     
-                    Win32.TranslateMessage(ref message);
-                    Win32.DispatchMessage(ref message);
+                    PInvoke.TranslateMessage(message);
+                    PInvoke.DispatchMessage(message);
                 }
             }
             catch (Exception e)
@@ -50,7 +54,7 @@ internal class WindowsLoop : MessageLoop
             finally
             {
                 if (timerId != null)
-                    Win32.KillTimer(Handle, timerId.Value);
+                    PInvoke.KillTimer(Handle, timerId.Value);
             }
         });
         

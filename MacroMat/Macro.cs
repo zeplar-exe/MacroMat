@@ -35,7 +35,7 @@ public sealed class Macro : IDisposable
     }
 
     /// <summary>
-    /// Initializes any expensive or macro-specific internals.
+    /// Initialize expensive internals.
     /// </summary>
     /// <remarks>
     /// To be specific, the following internal values are initialized:

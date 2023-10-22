@@ -1,4 +1,8 @@
-﻿using MacroMat.Common;
+﻿using System.Runtime.InteropServices;
+using Windows.Win32;
+using Windows.Win32.UI.Input.KeyboardAndMouse;
+using Windows.Win32.UI.TextServices;
+using MacroMat.Common;
 using MacroMat.Input;
 using MacroMat.SystemCalls.Windows;
 
@@ -28,58 +32,59 @@ public class SimulateKeyboardInstruction : MacroInstruction
 
             os.OnWindows(() =>
             {
-                var flags = (Win32.KEYBDEVENTF)0;
+                var flags = (KEYBD_EVENT_FLAGS)0;
 
                 if (Data.Type == KeyInputType.KeyUp)
-                    flags |= Win32.KEYBDEVENTF.KEYUP;
+                    flags |= KEYBD_EVENT_FLAGS.KEYEVENTF_KEYUP;
 
-                var inputs = new List<Win32.INPUT>();
+                var inputs = new INPUT[Data.Keys.Count];
+                var index = 0;
 
-                flags |= Win32.KEYBDEVENTF.SCANCODE;
+                flags |= KEYBD_EVENT_FLAGS.KEYEVENTF_SCANCODE;
                 
                 foreach (var key in Data.Keys)
                 {
                     if (key is Scancode scancode)
                     {
-                        var input = new Win32.INPUT
+                        var input = new INPUT
                         {
-                            type = Win32.InputType.INPUT_KEYBOARD,
-                            U = new Win32.InputUnion
+                            type = INPUT_TYPE.INPUT_KEYBOARD,
+                            Anonymous = new INPUT._Anonymous_e__Union
                             {
-                                ki = new Win32.KEYBDINPUT
+                                ki = new KEYBDINPUT
                                 {
-                                    wScan = (Win32.WindowsScanCode)scancode.Value,
+                                    wScan = scancode.Value,
                                     dwFlags = flags,
                                     time = 0
                                 }
                             }
                         };
                         
-                        inputs.Add(input);
+                        inputs[index++] = input;
                     }
                     else if (key is VirtualKey virtualKey)
                     {
-                        var virtualKeyScancode = Win32.MapVirtualKeyEx(
-                            (uint)virtualKey.Value, 
-                            (uint)Win32.MapVirtualKeyMapTypes.MAPVK_VK_TO_VSC, 
-                            IntPtr.Zero);
+                        var virtualKeyScancode = PInvoke.MapVirtualKeyEx(
+                            virtualKey.Value, 
+                            (uint)MAP_VIRTUAL_KEY_TYPE.MAPVK_VK_TO_VSC, 
+                            new HKL(IntPtr.Zero));
                     
-                        var input = new Win32.INPUT
+                        var input = new INPUT
                         {
-                            type = Win32.InputType.INPUT_KEYBOARD,
-                            U = new Win32.InputUnion
+                            type = INPUT_TYPE.INPUT_KEYBOARD,
+                            Anonymous = new INPUT._Anonymous_e__Union
                             {
-                                ki = new Win32.KEYBDINPUT
+                                ki = new KEYBDINPUT
                                 {
-                                    wVk = (Win32.WindowsVirtualKey)virtualKey.Value,
-                                    wScan = (Win32.WindowsScanCode)virtualKeyScancode,
+                                    wVk = (VIRTUAL_KEY)virtualKey.Value,
+                                    wScan = (ushort)virtualKeyScancode,
                                     dwFlags = flags,
                                     time = 0
                                 }
                             }
                         };
                         
-                        inputs.Add(input);
+                        inputs[index++] = input;
                     }
                 }
 
@@ -87,13 +92,19 @@ public class SimulateKeyboardInstruction : MacroInstruction
                 // if this every mysteriously stops working, make sure your enums are the correct numeric type
                 // an int enum where there should be a byte messes things up
 
-                var items = inputs.ToArray();
-                var result = Win32.SendInput((uint)items.Length, items, Win32.INPUT.Size);
-
-                if (result != items.Length)
+                unsafe
                 {
-                    WindowsHelper.HandleError(e => 
-                        macro.Messages.Error($"Simulate Key Error: [{e.NativeErrorCode}] {e.Message}"));
+                    fixed (INPUT* inputPtr = &inputs[0])
+                    {
+                        var items = inputs.ToArray();
+                        var result = PInvoke.SendInput((uint)items.Length, inputPtr, Marshal.SizeOf<INPUT>());
+
+                        if (result != items.Length)
+                        {
+                            WindowsHelper.HandleError(e => 
+                                macro.Messages.Error($"Simulate Key Error: [{e.NativeErrorCode}] {e.Message}"));
+                        }
+                    }
                 }
             }).Execute();
         });

@@ -11,7 +11,7 @@ public class InputWatcher : IDisposable
 
     private Macro Macro { get; }
     private Dictionary<KeyInputData, List<Action>> KeyCallbacks { get; }
-    private Dictionary<MouseInputData, List<Action>> MouseCallbacks { get; }
+    private Dictionary<MouseButtonInputData, List<Action>> MouseCallbacks { get; }
 
     public InputWatcher(Macro macro)
     {
@@ -19,7 +19,7 @@ public class InputWatcher : IDisposable
         PressedMouseButtons = new HashSet<MouseButton>();
         Macro = macro;
         KeyCallbacks = new Dictionary<KeyInputData, List<Action>>();
-        MouseCallbacks = new Dictionary<MouseInputData, List<Action>>();
+        MouseCallbacks = new Dictionary<MouseButtonInputData, List<Action>>();
 
         macro.OnKeyEvent(args =>
         {
@@ -58,14 +58,17 @@ public class InputWatcher : IDisposable
 
         macro.OnMouseEvent(args =>
         {
-            var button = args.Data.Button;
+            if (args.Data is not MouseButtonEventData buttonData)
+                return;
+            
+            var button = buttonData.Button;
             var oldPressedButtons = new HashSet<MouseButton>(PressedMouseButtons);
             
-            if (args.Data.Type == MouseInputType.Up)
+            if (buttonData.Type == MouseButtonInputType.Up)
             {
                 PressedMouseButtons.Add(button);
             }
-            else if (args.Data.Type == MouseInputType.Down)
+            else if (buttonData.Type == MouseButtonInputType.Down)
             {
                 PressedMouseButtons.Remove(button);
             }
@@ -80,23 +83,13 @@ public class InputWatcher : IDisposable
                 // inputData is for pressed and all matches all currently pressed keys
                 // OR
                 // keyInput data is for released, it was previously pressed, but not at least one of its keys has been released
-                if (inputData.Type == MouseInputType.Down && AllPressedIn(PressedMouseButtons) ||
-                    (inputData.Type == MouseInputType.Up && AllPressedIn(oldPressedButtons) && !AllPressedIn(PressedMouseButtons)))
+                if (inputData.Type == MouseButtonInputType.Down && AllPressedIn(PressedMouseButtons) ||
+                    (inputData.Type == MouseButtonInputType.Up && AllPressedIn(oldPressedButtons) && !AllPressedIn(PressedMouseButtons)))
                 {
                     actions.ForEach(a => a.Invoke());
                 }
             }
         });
-    }
-    
-    public bool IsKeyUp(IKeyRepresentation key)
-    {
-        return PressedKeys.Contains(key);
-    }
-    
-    public bool IsKeyDown(IKeyRepresentation key)
-    {
-        return PressedKeys.Contains(key);
     }
 
     public IDisposable AddKeyCallback(KeyInputData keyInput, Action action)
@@ -119,20 +112,20 @@ public class InputWatcher : IDisposable
         });
     }
     
-    public IDisposable AddMouseCallback(MouseInputData mouseInput, Action action)
+    public IDisposable AddMouseCallback(MouseButtonInputData mouseButtonInput, Action action)
     {
-        if (MouseCallbacks.TryGetValue(mouseInput, out var list))
+        if (MouseCallbacks.TryGetValue(mouseButtonInput, out var list))
         {
             list.Add(action);
         }
         else
         {
-            MouseCallbacks[mouseInput] = new List<Action> { action };
+            MouseCallbacks[mouseButtonInput] = new List<Action> { action };
         }
 
         return new ActionDisposable(() =>
         {
-            if (MouseCallbacks.TryGetValue(mouseInput, out var actions))
+            if (MouseCallbacks.TryGetValue(mouseButtonInput, out var actions))
             {
                 actions.Remove(action);
             }
@@ -144,9 +137,29 @@ public class InputWatcher : IDisposable
         KeyCallbacks.Remove(data);
     }
     
-    public void RemoveCallback(MouseInputData data)
+    public void RemoveCallback(MouseButtonInputData data)
     {
         MouseCallbacks.Remove(data);
+    }
+    
+    public bool IsKeyUp(IKeyRepresentation key)
+    {
+        return !PressedKeys.Contains(key);
+    }
+    
+    public bool IsKeyDown(IKeyRepresentation key)
+    {
+        return PressedKeys.Contains(key);
+    }
+
+    public bool IsMouseButtonUp(MouseButton button)
+    {
+        return !PressedMouseButtons.Contains(button);
+    }
+    
+    public bool IsMouseButtonDown(MouseButton button)
+    {
+        return PressedMouseButtons.Contains(button);
     }
 
     public void Dispose()

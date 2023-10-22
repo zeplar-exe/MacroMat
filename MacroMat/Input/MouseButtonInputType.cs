@@ -3,7 +3,7 @@
 /// <summary>
 /// Type of mouse input in a simulation or event.
 /// </summary>
-public enum MouseInputType
+public enum MouseButtonInputType
 {
     /// <summary>
     /// Represents a mouse button as pressed.
@@ -13,6 +13,4 @@ public enum MouseInputType
     /// Represents a mouse button as released.
     /// </summary>
     Up,
-    WheelBackward,
-    WheelForward,
 }

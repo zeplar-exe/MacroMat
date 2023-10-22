@@ -6,6 +6,7 @@ public enum WindowsMouseState : int
     LButtonUp = 0x202,
     MouseMove = 0x200,
     MouseWheel = 0x20A,
+    MouseHWheel = 0x20E,
     RButtonDown = 0x204,
     RButtonUp = 0x205
 }
