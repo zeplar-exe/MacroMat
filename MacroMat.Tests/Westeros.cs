@@ -1,4 +1,6 @@
-﻿using MacroMat.Common;
+﻿using System.Runtime.InteropServices;
+using Windows.Win32.UI.Input.KeyboardAndMouse;
+using MacroMat.Common;
 using MacroMat.Extensions;
 using MacroMat.Input;
 using MacroMat.Instructions;
@@ -12,12 +14,15 @@ public class Westeros
     [Test]
     public void Test1()
     {
-        new Macro()
+        var macro = new Macro();
+        macro.Messages.ThrowExceptionOnError = true;
+        
+        macro
             .Wait(1500)
-            .SimulateInput(KeyInputData.Press(Scancode.Of(InputKey.D)))
-            .SimulateInput(KeyInputData.Release(Scancode.Of(InputKey.D)))
+            .SimulateInput(KeyInputData.Press(VirtualKey.Of(InputKey.D)))
+            .SimulateInput(KeyInputData.Release(VirtualKey.Of(InputKey.D)))
             .SimulateUnicode("Hello world!")
-            .Wait(100)
+            .Wait(1000)
         .Dispose();
     }
 

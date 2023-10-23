@@ -1,6 +1,6 @@
 ﻿namespace MacroMat.SystemCalls.Windows;
 
-public enum WindowsMouseState : int
+public enum WindowsMouseState : uint
 {
     LButtonDown = 0x0201,
     LButtonUp = 0x202,

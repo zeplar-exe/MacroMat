@@ -65,10 +65,10 @@ public class SimulateKeyboardInstruction : MacroInstruction
                     else if (key is VirtualKey virtualKey)
                     {
                         var virtualKeyScancode = PInvoke.MapVirtualKeyEx(
-                            virtualKey.Value, 
+                            (uint)virtualKey.Value, 
                             (uint)MAP_VIRTUAL_KEY_TYPE.MAPVK_VK_TO_VSC, 
-                            new HKL(IntPtr.Zero));
-                    
+                            new HKL());
+                        
                         var input = new INPUT
                         {
                             type = INPUT_TYPE.INPUT_KEYBOARD,
@@ -96,10 +96,9 @@ public class SimulateKeyboardInstruction : MacroInstruction
                 {
                     fixed (INPUT* inputPtr = &inputs[0])
                     {
-                        var items = inputs.ToArray();
-                        var result = PInvoke.SendInput((uint)items.Length, inputPtr, Marshal.SizeOf<INPUT>());
+                        var result = PInvoke.SendInput((uint)inputs.Length, inputPtr, Marshal.SizeOf<INPUT>());
 
-                        if (result != items.Length)
+                        if (result != inputs.Length)
                         {
                             WindowsHelper.HandleError(e => 
                                 macro.Messages.Error($"Simulate Key Error: [{e.NativeErrorCode}] {e.Message}"));

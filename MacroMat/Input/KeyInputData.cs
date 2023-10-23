@@ -35,17 +35,17 @@ public readonly struct KeyInputData
     
     public static KeyInputData Press(IEnumerable<IKeyRepresentation> keys)
     {
-        return new KeyInputData(keys.ToArray().AsReadOnly(), KeyInputType.KeyDown);
+        return new KeyInputData(keys.ToArray(), KeyInputType.KeyDown);
     }
     
     public static KeyInputData Release(params IKeyRepresentation[] keys)
     {
-        return new KeyInputData(keys.ToArray().AsReadOnly(), KeyInputType.KeyUp);
+        return new KeyInputData(keys.ToArray(), KeyInputType.KeyUp);
     }
     
     public static KeyInputData Release(IEnumerable<IKeyRepresentation> keys)
     {
-        return new KeyInputData(keys.ToArray().AsReadOnly(), KeyInputType.KeyUp);
+        return new KeyInputData(keys.ToArray(), KeyInputType.KeyUp);
     }
 
     private KeyInputData(IReadOnlyCollection<IKeyRepresentation> keys, KeyInputType type)

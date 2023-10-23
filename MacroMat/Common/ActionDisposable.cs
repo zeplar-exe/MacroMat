@@ -1,4 +1,7 @@
-﻿namespace MacroMat.Common;
+﻿using System.Runtime.CompilerServices;
+[assembly: InternalsVisibleTo("MacroMat.Tests")]
+
+namespace MacroMat.Common;
 
 internal class ActionDisposable : IDisposable
 {

@@ -20,7 +20,7 @@ internal static class InputKeyTranslator
             {
                 var windowsVirtualKey = ToWindowsVirtual(key);
 
-                return VirtualKey.From((byte)windowsVirtualKey);
+                return VirtualKey.From((short)windowsVirtualKey);
             })
             .Execute();
     }
@@ -29,8 +29,6 @@ internal static class InputKeyTranslator
     
     public static Scancode ToWindowsScancode(InputKey key)
     {
-        // https://docs.google.com/spreadsheets/d/1GSj0gKDxyWAecB3SIyEZ2ssPETZkkxn67gdIwL1zFUs/edit#gid=0
-        
         return key switch
         {
             InputKey.F1 => Scancode.From((ushort)Win32.WindowsScanCode.F1),

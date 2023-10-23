@@ -3,7 +3,7 @@ using Vogen;
 
 namespace MacroMat.Common;
 
-[ValueObject<byte>]
+[ValueObject<short>]
 public partial struct VirtualKey : IKeyRepresentation
 {
     public static VirtualKey Of(InputKey key)
