@@ -1,5 +1,8 @@
 ﻿namespace MacroMat.Common;
 
+/// <summary>
+/// Helper class for executing OS-specific code.
+/// </summary>
 internal class OsSelector
 {
     private Action? Windows { get; set; }
@@ -44,6 +47,10 @@ internal class OsSelector
     }
 }
 
+/// <summary>
+/// Helper class for executing and returning values from OS-specific code. 
+/// </summary>
+/// <typeparam name="T">Return value type.</typeparam>
 internal class OsSelector<T>
 {
     private Func<T>? Windows { get; set; }

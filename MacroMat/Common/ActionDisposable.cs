@@ -1,5 +1,8 @@
 ﻿namespace MacroMat.Common;
 
+/// <summary>
+/// IDisposable implementation which invokes an <see cref="System.Action"/> on disposal.
+/// </summary>
 internal class ActionDisposable : IDisposable
 {
     private Action Action { get; }

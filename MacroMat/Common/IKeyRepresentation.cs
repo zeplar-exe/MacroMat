@@ -2,8 +2,8 @@
 
 /// <summary>
 /// Unifying interface for <see cref="VirtualKey"/> and <see cref="Scancode"/>.
-/// Classes that implement this interface other than VirtualKey and Scancode
-/// are moot when used with existing library methods.
+/// VirtualKey and Scancode's usage are hardcoded into the library. Any other classes
+/// which implement this may as well be no-ops.
 /// </summary>
 public interface IKeyRepresentation
 {
