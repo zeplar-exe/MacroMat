@@ -34,17 +34,6 @@ public static class MacroKeyCallbackExtensions
     /// </summary>
     public static Macro OnKey(this Macro macro, InputKey key, KeyInputType type, Action<KeyboardEventArgs> action)
     {
-        return OnKeyInternal(macro, key, type, true, action);
-    }
-    
-    public static Macro OnKeyAlternate(this Macro macro, InputKey key, KeyInputType type, Action<KeyboardEventArgs> action)
-    {
-        return OnKeyInternal(macro, key, type, false, action);
-    }
-    
-    private static Macro OnKeyInternal(this Macro macro, InputKey key, KeyInputType type, bool alternate, 
-        Action<KeyboardEventArgs> action)
-    {
         return OnKeyEvent(macro, 
             data =>
             {
@@ -57,9 +46,6 @@ public static class MacroKeyCallbackExtensions
                 }
 
                 if (type != data.Type)
-                    return false;
-
-                if (alternate && !data.IsAlt)
                     return false;
 
                 return true;

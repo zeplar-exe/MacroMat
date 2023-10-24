@@ -1,4 +1,5 @@
-﻿using MacroMat.Input;
+﻿using MacroMat.Common;
+using MacroMat.Input;
 using MacroMat.Instructions;
 
 namespace MacroMat.Extensions;
@@ -8,13 +9,35 @@ namespace MacroMat.Extensions;
 /// </summary>
 public static class MacroSimulateExtensions
 {
+    public static Macro PressKey(this Macro macro, IKeyRepresentation key)
+    {
+        new SimulateKeyboardInstruction(KeyInputData.Press(key)).Execute(macro);
+        
+        return macro;
+    }
+    
+    public static Macro ReleaseKey(this Macro macro, IKeyRepresentation key)
+    {
+        new SimulateKeyboardInstruction(KeyInputData.Release(key)).Execute(macro);
+
+        return macro;
+    }
+    
+    public static Macro TapKey(this Macro macro, IKeyRepresentation key)
+    {
+        macro.PressKey(key);
+        macro.ReleaseKey(key);
+
+        return macro;
+    }
+    
     /// <summary>
     /// Enqueue a SimulateKeyboardInstruction to simulate the specified input.
     /// </summary>
     /// <param name="macro"></param>
     /// <param name="data"></param>
     /// <returns></returns>
-    public static Macro SimulateInput(this Macro macro, KeyInputData data)
+    public static Macro SimulateKeyInput(this Macro macro, KeyInputData data)
     {
         new SimulateKeyboardInstruction(data).Execute(macro);
         
@@ -28,14 +51,95 @@ public static class MacroSimulateExtensions
     /// This method creates two SendUnicodeInstructions for KeyDown and KeyUp
     /// using a compound instruction.
     /// </remarks>
-    public static Macro SimulateUnicode(this Macro macro, string s)
+    public static Macro PressUnicode(this Macro macro, string s)
     {
-        var compound = new CompoundInstruction();
+        new SendUnicodeInstruction(s, KeyInputType.KeyDown).Execute(macro);
         
-        compound.AddInstruction(new SendUnicodeInstruction(s, KeyInputType.KeyDown));
-        compound.AddInstruction(new SendUnicodeInstruction(s, KeyInputType.KeyUp));
+        return macro;
+    }
+    
+    /// <summary>
+    /// Enqueues SendUnicodeInstructions to write the specified unicode string once.
+    /// </summary>
+    /// <remarks>
+    /// This method creates two SendUnicodeInstructions for KeyDown and KeyUp
+    /// using a compound instruction.
+    /// </remarks>
+    public static Macro ReleaseUnicode(this Macro macro, string s)
+    {
+        new SendUnicodeInstruction(s, KeyInputType.KeyUp).Execute(macro);
         
-        compound.Execute(macro);
+        return macro;
+    }
+    
+    /// <summary>
+    /// Enqueues SendUnicodeInstructions to write the specified unicode string once.
+    /// </summary>
+    /// <remarks>
+    /// This method creates two SendUnicodeInstructions for KeyDown and KeyUp
+    /// using a compound instruction.
+    /// </remarks>
+    public static Macro TapUnicode(this Macro macro, string s)
+    {
+        macro.PressUnicode(s);
+        macro.ReleaseUnicode(s);
+        
+        return macro;
+    }
+
+    public static Macro PressMouseButton(this Macro macro, MouseButton button)
+    {
+        new SimulateMouseButtonInstruction(new MouseButtonInputData(button, MouseButtonInputType.Down)).Execute(macro);
+        
+        return macro;
+    }
+
+    public static Macro ReleaseMouseButton(this Macro macro, MouseButton button)
+    {
+        new SimulateMouseButtonInstruction(new MouseButtonInputData(button, MouseButtonInputType.Up)).Execute(macro);
+        
+        return macro;
+    }
+
+    public static Macro TapMouseButton(this Macro macro, MouseButton button)
+    {
+        macro.PressMouseButton(button);
+        macro.ReleaseMouseButton(button);
+
+        return macro;
+    }
+
+    public static Macro SimulateMouseInput(this Macro macro, MouseButtonInputData data)
+    {
+        new SimulateMouseButtonInstruction(data).Execute(macro);
+        
+        return macro;
+    }
+
+    public static Macro Scroll(this Macro macro, int x, int y)
+    {
+        new SimulateMouseWheelInstruction(new MouseWheelInputData(y, x)).Execute(macro);
+        
+        return macro;
+    }
+
+    public static Macro ScrollVertical(this Macro macro, int y)
+    {
+        new SimulateMouseWheelInstruction(new MouseWheelInputData(y, 0)).Execute(macro);
+        
+        return macro;
+    }
+
+    public static Macro ScrollHorizontal(this Macro macro, int x)
+    {
+        new SimulateMouseWheelInstruction(new MouseWheelInputData(0, x)).Execute(macro);
+        
+        return macro;
+    }
+
+    public static Macro MoveMouse(this Macro macro, params (int X, int Y)[] positions)
+    {
+        new SimulateMouseMoveInstruction(positions).Execute(macro);
         
         return macro;
     }
