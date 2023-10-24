@@ -1,4 +1,4 @@
 ﻿using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("MacroMat.ConsoleTest")]
+[assembly: InternalsVisibleTo("MacroMat.Tests")]
 namespace MacroMat;
