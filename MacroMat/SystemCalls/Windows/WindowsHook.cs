@@ -60,7 +60,7 @@ internal class WindowsHook : IPlatformHook, IKeyboardHook, IMouseHook
         
         foreach (var hook in Hooks)
         {
-            var handle = PInvoke.SetWindowsHookEx(hook.Id, hook.Proc, User32LibraryHandle, 0);
+            var handle = PInvoke.SetWindowsHookEx(hook.Id, hook.Proc, null, 0);
 
             if (handle.IsInvalid)
             {
@@ -109,10 +109,10 @@ internal class WindowsHook : IPlatformHook, IKeyboardHook, IMouseHook
             
             return args.Handled ? 
                 new LRESULT(IntPtr.MaxValue) : 
-                PInvoke.CallNextHookEx(User32LibraryHandle, nCode, wParam, lParam);
+                PInvoke.CallNextHookEx(null, nCode, wParam, lParam);
         }
 
-        return PInvoke.CallNextHookEx(User32LibraryHandle, nCode, wParam, lParam);
+        return PInvoke.CallNextHookEx(null, nCode, wParam, lParam);
     }
 
     public LRESULT LowLevelMouseProc(int nCode, WPARAM wParam, LPARAM lParam)
@@ -172,10 +172,10 @@ internal class WindowsHook : IPlatformHook, IKeyboardHook, IMouseHook
 
             return args.Handled ? 
                 new LRESULT(IntPtr.MaxValue) : 
-                PInvoke.CallNextHookEx(User32LibraryHandle, nCode, wParam, lParam);
+                PInvoke.CallNextHookEx(null, nCode, wParam, lParam);
         }
         
-        return PInvoke.CallNextHookEx(User32LibraryHandle, nCode, wParam, lParam);
+        return PInvoke.CallNextHookEx(null, nCode, wParam, lParam);
     }
     
     public void Dispose()
