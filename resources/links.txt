@@ -1,0 +1,2 @@
+http://www.kbdedit.com/manual/low_level_vk_list.html
+AHK Scancode List - https://docs.google.com/spreadsheets/d/1GSj0gKDxyWAecB3SIyEZ2ssPETZkkxn67gdIwL1zFUs/edit#gid=0
