@@ -1,6 +1,4 @@
-﻿using System.Numerics;
-
-namespace MacroMat.Input;
+﻿namespace MacroMat.Input;
 
 public class MouseWheelInputData
 {

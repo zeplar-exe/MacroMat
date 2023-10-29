@@ -1,7 +1,4 @@
-﻿using MacroMat.Input;
-using MacroMat.Instructions;
-
-namespace MacroMat;
+﻿namespace MacroMat;
 
 /// <summary>
 /// The core class for building and executing macros.

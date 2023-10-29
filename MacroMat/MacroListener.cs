@@ -1,5 +1,4 @@
 ﻿using MacroMat.Common;
-using MacroMat.Input;
 using MacroMat.SystemCalls;
 using MacroMat.SystemCalls.Windows;
 

@@ -3,7 +3,6 @@ using System.Runtime.InteropServices;
 using Windows.Win32;
 using Windows.Win32.UI.Input.KeyboardAndMouse;
 using MacroMat.Common;
-using MacroMat.Input;
 using MacroMat.SystemCalls.Windows;
 
 namespace MacroMat.Instructions;
