@@ -17,6 +17,10 @@ public partial struct Scancode : IKeyRepresentation
     /// <see cref="Scancode"/> which corresponds to the physical location of
     /// the <see cref="InputKey"/> on the keyboard.
     /// </returns>
+    /// <remarks>
+    /// The returned Scancode is based on a QWERTY English/US keyboard.
+    /// For alternative layouts, use <see cref="From"/> and manually input scancodes.
+    /// </remarks>
     public static Scancode Of(InputKey key)
     {
         return InputKeyTranslator.CurrentPlatformScancode(key);
@@ -30,6 +34,10 @@ public partial struct Scancode : IKeyRepresentation
     /// <see cref="Scancode">Scancodes</see> which correspond to the given
     /// <see cref="InputKey">InputKeys</see>.
     /// </returns>
+    /// /// <remarks>
+    /// The returned Scancodes are based on a QWERTY English/US keyboard.
+    /// For alternative layouts, use <see cref="From"/> and manually input scancodes.
+    /// </remarks>
     public static IEnumerable<IKeyRepresentation> Of(params InputKey[] keys)
     {
         return keys.Select(InputKeyTranslator.CurrentPlatformScancode).Cast<IKeyRepresentation>().ToArray();
