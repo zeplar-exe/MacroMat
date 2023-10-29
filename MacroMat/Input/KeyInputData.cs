@@ -47,10 +47,16 @@ public readonly struct KeyInputData
     {
         return new KeyInputData(keys.ToArray(), KeyInputType.KeyUp);
     }
-
-    private KeyInputData(IReadOnlyCollection<IKeyRepresentation> keys, KeyInputType type)
+    
+    public KeyInputData(IKeyRepresentation key, KeyInputType type)
     {
-        Keys = keys;
+        Keys = new List<IKeyRepresentation>(new[] { key }).AsReadOnly();
+        Type = type;
+    }
+
+    public KeyInputData(IEnumerable<IKeyRepresentation> keys, KeyInputType type)
+    {
+        Keys = keys.ToList().AsReadOnly();
         Type = type;
     }
 

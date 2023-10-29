@@ -1,4 +1,6 @@
-﻿using MacroMat.Instructions;
+﻿using MacroMat.Common;
+using MacroMat.Input;
+using MacroMat.Instructions;
 
 namespace MacroMat.Extensions;
 
@@ -24,6 +26,78 @@ public static class MacroWaitExtensions
     {
         new WaitInstruction(time).Execute(macro);
         
+        return macro;
+    }
+    
+    public static Macro WaitForKeyPressed(this Macro macro, IKeyRepresentation key, int waitInterval = 100)
+    {
+        var done = false;
+
+        macro.OnKeyPressed(key, _ => done = true);
+
+        while (!done)
+            macro.Wait(waitInterval);
+
+        return macro;
+    }
+
+    public static Macro WaitForKeyReleased(this Macro macro, IKeyRepresentation key, int waitInterval = 100)
+    {
+        var done = false;
+
+        macro.OnKeyReleased(key, _ => done = true);
+
+        while (!done)
+            macro.Wait(waitInterval);
+
+        return macro;
+    }
+
+    public static Macro WaitForMouseButtonPressed(this Macro macro, MouseButton button, int waitInterval = 100)
+    {
+        var done = false;
+
+        macro.OnMouseButtonPressed(button, (_, _) => done = true);
+
+        while (!done)
+            macro.Wait(waitInterval);
+
+        return macro;
+    }
+    
+    public static Macro WaitForMouseButtonReleased(this Macro macro, MouseButton button, int waitInterval = 100)
+    {
+        var done = false;
+
+        macro.OnMouseButtonReleased(button, (_, _) => done = true);
+
+        while (!done)
+            macro.Wait(waitInterval);
+
+        return macro;
+    }
+    
+    public static Macro WaitForMouseMove(this Macro macro, int verticalAmount = 0, int horizontalAmount = 0, int waitInterval = 100)
+    {
+        var done = false;
+
+        macro.OnMouseMove((_, _) => done = true);
+
+        while (!done)
+            macro.Wait(waitInterval);
+
+        return macro;
+    }
+    
+    public static Macro WaitForMouseScroll(this Macro macro, int verticalAmount = 0, int horizontalAmount = 0, int waitInterval = 100)
+    {
+        var done = false;
+
+        macro.OnMouseScroll((_, _) => done = true);
+
+        while (!done)
+            macro.Wait(waitInterval);
+
         return macro;
     }
 }

@@ -27,6 +27,16 @@ public static class MacroMouseCallbackExtensions
                 action.Invoke(args, (MouseButtonEventData)args.Data);
             });
     }
+    
+    public static Macro OnMouseButtonPressed(this Macro macro, MouseButton button, Action<MouseEventArgs, MouseButtonEventData> action)
+    {
+        return macro.OnMouseButton(data => data.Button == button && data.Type == MouseButtonInputType.Down, action);
+    }
+    
+    public static Macro OnMouseButtonReleased(this Macro macro, MouseButton button, Action<MouseEventArgs, MouseButtonEventData> action)
+    {
+        return macro.OnMouseButton(data => data.Button == button && data.Type == MouseButtonInputType.Up, action);
+    }
 
     public static Macro OnMouseButton(this Macro macro,
         Func<MouseButtonEventData, bool> predicate, Action<MouseEventArgs, MouseButtonEventData> action)
@@ -45,14 +55,9 @@ public static class MacroMouseCallbackExtensions
             });
     }
     
-    public static Macro OnMouseScroll(this Macro macro, Action<MouseEventArgs, MouseButtonEventData> action)
+    public static Macro OnMouseScroll(this Macro macro, Action<MouseEventArgs, MouseWheelEventData> action)
     {
-        return macro.OnMouseEvent(
-            _ => true,
-            args =>
-            {
-                action.Invoke(args, (MouseButtonEventData)args.Data);
-            });
+        return macro.OnMouseScroll(_ => true, action);
     }
 
     public static Macro OnMouseScroll(this Macro macro,
@@ -72,13 +77,13 @@ public static class MacroMouseCallbackExtensions
             });
     }
     
-    public static Macro OnMouseMove(this Macro macro, Action<MouseEventArgs, MouseButtonEventData> action)
+    public static Macro OnMouseMove(this Macro macro, Action<MouseEventArgs, MouseMoveEventData> action)
     {
         return macro.OnMouseEvent(
             _ => true,
             args =>
             {
-                action.Invoke(args, (MouseButtonEventData)args.Data);
+                action.Invoke(args, (MouseMoveEventData)args.Data);
             });
     }
 
