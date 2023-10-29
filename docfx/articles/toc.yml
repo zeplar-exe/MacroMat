@@ -2,3 +2,7 @@
   href: WhatIsMacroMat.md
 - name: Quick Start
   href: QuickStart.md
+- name: Keyboard & Mouse Callbacks
+  href: KeyMouseCallbacks.md
+- name: Nuances
+  href: Nuances.md
