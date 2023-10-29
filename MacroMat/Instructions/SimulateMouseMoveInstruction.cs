@@ -11,7 +11,7 @@ namespace MacroMat.Instructions;
 /// <summary>
 /// Instruction to simulate a mouse click at its current position.
 /// </summary>
-public class SimulateMouseMoveInstruction : MacroInstruction
+public partial class SimulateMouseMoveInstruction : MacroInstruction
 {
     private (int X, int Y)[] Positions { get; }
 
@@ -58,42 +58,7 @@ public class SimulateMouseMoveInstruction : MacroInstruction
             
             os.OnWindows(() =>
             {
-                var inputs = new INPUT[Positions.Length];
-
-                for (var index = 0; index < Positions.Length; index++)
-                {
-                    var position = Positions[index];
-                    var input = new INPUT
-                    {
-                        type = INPUT_TYPE.INPUT_MOUSE,
-                        Anonymous = new INPUT._Anonymous_e__Union
-                        {
-                            mi = new MOUSEINPUT
-                            {
-                                dwFlags = MOUSE_EVENT_FLAGS.MOUSEEVENTF_MOVE,
-                                dx = position.X,
-                                dy = position.Y,
-                                time = 0
-                            }
-                        }
-                    };
-
-                    inputs[index] = input;
-                }
-
-                unsafe
-                {
-                    fixed (INPUT* inputsPtr = &inputs[0])
-                    {
-                        var result = PInvoke.SendInput((uint)inputs.Length, inputsPtr, Marshal.SizeOf<INPUT>());
-
-                        if (result != 1)
-                        {
-                            WindowsHelper.HandleError(e =>
-                                macro.Messages.Error($"Simulate Mouse Move Error: [{e.NativeErrorCode}] {e.Message}"));
-                        }
-                    }
-                }
+                WindowsImplementation(macro);
             }).Execute();
         });
     }

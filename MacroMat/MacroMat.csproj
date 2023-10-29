@@ -18,4 +18,22 @@
       <PackageReference Include="Vogen" Version="3.0.21" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Update="Instructions\SendUnicodeInstruction.Windows.cs">
+        <DependentUpon>SendUnicodeInstruction.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Instructions\SimulateKeyboardInstruction.Windows.cs">
+        <DependentUpon>SimulateKeyboardInstruction.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Instructions\SimulateMouseButtonInstruction.Windows.cs">
+        <DependentUpon>SimulateMouseButtonInstruction.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Instructions\SimulateMouseMoveInstruction.Windows.cs">
+        <DependentUpon>SimulateMouseMoveInstruction.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Instructions\SimulateMouseWheelInstruction.Windows.cs">
+        <DependentUpon>SimulateMouseWheelInstruction.cs</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
 </Project>
