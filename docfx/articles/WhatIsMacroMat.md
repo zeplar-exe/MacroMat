@@ -16,8 +16,8 @@ using MacroMat.Extensions;
 
 var macro = new Macro();
 
-macro.TapUnicode("Press X to terminate.")
-macro.WaitForKeyPress(InputKey.X, KeyInputType.Pressed, args => {
+macro.TapUnicode("Press X to terminate macro.")
+macro.OnKey(InputKey.X, KeyInputType.Pressed, args => {
     macro.Dispose()
 })
 ```
