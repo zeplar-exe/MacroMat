@@ -1,4 +1,5 @@
-﻿using MacroMat.Common;
+﻿using System.Drawing;
+using MacroMat.Common;
 using MacroMat.Input;
 using MacroMat.Instructions;
 
@@ -138,6 +139,13 @@ public static class MacroSimulateExtensions
     }
 
     public static Macro MoveMouse(this Macro macro, params (int X, int Y)[] positions)
+    {
+        new SimulateMouseMoveInstruction(positions).Execute(macro);
+        
+        return macro;
+    }
+    
+    public static Macro MoveMouse(this Macro macro, Point[] positions)
     {
         new SimulateMouseMoveInstruction(positions).Execute(macro);
         

@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Drawing;
+using System.Runtime.InteropServices;
 using Windows.Win32;
 using Windows.Win32.UI.Input.KeyboardAndMouse;
 using MacroMat.Common;
@@ -35,10 +36,15 @@ public class SimulateMouseMoveInstruction : MacroInstruction
         Positions = positions.Select((array, i) =>
         {
             if (array.Length != 2)
-                throw new ArgumentException($"Expected int array to contain exactly two integers (index:{i}, [ {string.Join(", ", array)} ])");
+                throw new ArgumentException($"Expected int array to contain exactly two integers (index: {i}, [ {string.Join(", ", array)} ])");
 
             return (array[0], array[1]);
         }).ToArray();
+    }
+    
+    public SimulateMouseMoveInstruction(IEnumerable<Point> positions)
+    {
+        Positions = positions.Select((p, i) => (p.X, p.Y)).ToArray();
     }
 
     /// <inheritdoc />
