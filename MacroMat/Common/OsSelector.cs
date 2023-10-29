@@ -51,7 +51,7 @@ internal class OsSelector
 /// Helper class for executing and returning values from OS-specific code. 
 /// </summary>
 /// <typeparam name="T">Return value type.</typeparam>
-internal class OsSelector<T>
+public class OsSelector<T>
 {
     private Func<T>? Windows { get; set; }
     private Func<T>? Mac { get; set; }
