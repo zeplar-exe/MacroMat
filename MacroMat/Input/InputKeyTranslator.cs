@@ -158,6 +158,12 @@ internal static class InputKeyTranslator
             InputKey.RightArrow => Scancode.From((ushort)Win32.WindowsScanCode.RIGHT),
             InputKey.UpArrow => Scancode.From((ushort)Win32.WindowsScanCode.UP),
             InputKey.DownArrow => Scancode.From((ushort)Win32.WindowsScanCode.DOWN),
+            InputKey.Home => Scancode.From((ushort)Win32.WindowsScanCode.HOME),
+            InputKey.End => Scancode.From((ushort)Win32.WindowsScanCode.END),
+            InputKey.PageUp => Scancode.From(49),
+            InputKey.PageDown => Scancode.From(51),
+            InputKey.Insert => Scancode.From((ushort)Win32.WindowsScanCode.INSERT),
+            InputKey.PrintScreen => Scancode.From((ushort)Win32.WindowsScanCode.PRINT),
             _ => throw new ArgumentOutOfRangeException(
                 $"{key} does not have a valid scancode equivalent on Windows.")
         };
@@ -297,6 +303,12 @@ internal static class InputKeyTranslator
             InputKey.RightArrow => VIRTUAL_KEY.VK_RIGHT,
             InputKey.UpArrow => VIRTUAL_KEY.VK_UP,
             InputKey.DownArrow => VIRTUAL_KEY.VK_DOWN,
+            InputKey.Home => VIRTUAL_KEY.VK_HOME,
+            InputKey.End => VIRTUAL_KEY.VK_END,
+            InputKey.PageUp => VIRTUAL_KEY.VK_PRIOR,
+            InputKey.PageDown => VIRTUAL_KEY.VK_NEXT,
+            InputKey.Insert => VIRTUAL_KEY.VK_INSERT,
+            InputKey.PrintScreen => VIRTUAL_KEY.VK_PRINT,
             _ => throw new ArgumentOutOfRangeException(
                 $"{key} does not have a valid virtual key equivalent on Windows.")
         };

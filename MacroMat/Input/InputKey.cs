@@ -39,5 +39,7 @@ public enum InputKey : short
     
     Num0, Num1, Num2, Num3, Num4, Num5, Num6, Num7, Num8, Num9,
     
-    LeftArrow, RightArrow, UpArrow, DownArrow
+    LeftArrow, RightArrow, UpArrow, DownArrow,
+    
+    Home, End, PageUp, PageDown, Insert, PrintScreen
 }
