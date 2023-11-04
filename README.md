@@ -66,16 +66,6 @@ macro.SimulateUnicode("Unicode, UTF-8, or is it UTF-16?")
 
 See the [documentation](example.com) or the extended [Getting Started](example.com) guide.
 
-### Language CLI
-
-#### Installation
-
-The CLI is available under any [release](https://github.com/zeplar-exe/MacroMat/releases) for Windows, Mac, and Linux.
-
-#### Usage
-
-The CLI is not done, at all.
-
 ## Contributing
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md).
