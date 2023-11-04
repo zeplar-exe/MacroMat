@@ -69,7 +69,3 @@ See the [documentation](example.com) or the extended [Getting Started](example.c
 ## Contributing
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md).
-
-## Credit
-
-To me, for creating [BakedEnv](https://github.com/zeplar-exe/BakedEnv).
