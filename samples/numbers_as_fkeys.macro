@@ -1,8 +1,0 @@
-﻿remap Key.One as Key.F1 # When 1 is pressed, F1 is pressed, the same goes for released
-remap Key.Two as Key.F2
-remap Key.Three as Key.F3
-remap Key.Four as Key.F4
-remap Key.Five as Key.F5
-
-remap Key.Six down as Key.F6 up # When 6 is pressed, F6 is released
-remap Key.Seven up as Key.F7 down # When 7 is released, F7 is pressed
