@@ -1,2 +1,24 @@
 http://www.kbdedit.com/manual/low_level_vk_list.html
 AHK Scancode List - https://docs.google.com/spreadsheets/d/1GSj0gKDxyWAecB3SIyEZ2ssPETZkkxn67gdIwL1zFUs/edit#gid=0
+
+Scancode site in general: http://kbdlayout.info
+French AZERTY scancodes: http://kbdlayout.info/KBDFR/scancodes+names
+German scancodes: https://kbdlayout.info/kbdgr/scancodes
+Keyboard layouts using VK_OEM_2: https://kbdlayout.info/features/virtualkeys/VK_OEM_2
+
+C# Global Keyboard hook in linux: https://stackoverflow.com/questions/69414090/how-to-create-global-keyboard-hook-with-c-sharp-in-linux
+Linux: event keystrokes with uinput: https://stackoverflow.com/questions/40676172/how-to-generate-key-strokes-events-with-the-input-subsystem
+
+https://www.google.com/search?q=the+monge+getting+started+with+uinput
+
+using-c-to-simulate-a-keystroke-in-linux-with-the-uinput-library: https://stackoverflow.com/questions/44754645/using-c-to-simulate-a-keystroke-in-linux-with-the-uinput-library
+
+macos virtual key codes: https://stackoverflow.com/questions/3202629/where-can-i-find-a-list-of-mac-virtual-key-codes
+
+WE CAN USE MACOS LIBRARIES IN C############: https://learn.microsoft.com/en-us/dotnet/api/coregraphics.cgevent?view=xamarin-mac-sdk-14
+
+macos remap key: https://stackoverflow.com/questions/5785630/modify-nsevent-to-send-a-different-key-than-the-one-that-was-pressed/5785895#5785895
+
+ubuntu linux virtual keys: https://manpages.ubuntu.com/manpages/focal/man7/virkeycode-linux.7.html
+
+autokey (ahk for linux): https://autokey.github.io/index.html
