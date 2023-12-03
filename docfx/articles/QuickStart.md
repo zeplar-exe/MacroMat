@@ -8,7 +8,9 @@ MacroMat is available as a [nuget package](example.com).
 
 ## Building Macros
 
-The `Macro` class provides an entry point for all macro operations. Individual operations, `MacroInstruction`s, are executed independetly by using `MacroInstruction.Execute(Macro)`.
+The `Macro` class provides an entry point for all macro operations. Individual 
+operations, `MacroInstruction`s, are executed independently by using 
+@MacroMat.Instructions.MacroInstruction.Execute
 
 ```cs
 using System;
@@ -26,7 +28,8 @@ wait.Execute(macro);
 macro.Dispose()
 ```
 
-The above example presses the A key for 1 second before disposing of the macro. [All of the available `MacroInstruction`s can be found here.](/api/MacroMat.Instructions.html)
+The above example presses the A key for 1 second before disposing of the macro.
+[All of the available `MacroInstruction`s can be found here.](/api/MacroMat.Instructions.html)
 
 For convenience, a plethora of extension methods are provided for common instructions:
 
@@ -52,8 +55,12 @@ macro.MoveMouse((400, 300))
      .Dispose();
 ```
 
-[The full list can be found here.](/api/MacroMat.Extensions.html)
+[The full list of extensions can be found here.](/api/MacroMat.Extensions.html)
 
 ## Notes
 
-- It is vital that `Macro` instaces are properly disposed of. Low level hooks can remain active after the application has closed. Ensure that `Macro.Dispose` is called before your program exits.
+- It is vital that `Macro` instances are properly disposed of. Low level hooks 
+can remain active after the application has closed. Hanging input hooks prevent 
+MacroMat from creating more hooks should the application be rerun. They can 
+also cause input lag, blue screens, or OS timeouts. Ensure that 
+@MacroMat.Macro.Dispose is called before your program exits.

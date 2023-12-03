@@ -18,8 +18,8 @@ var macro = new Macro();
 
 macro.TapUnicode("Press X to terminate macro.")
 macro.OnKey(InputKey.X, KeyInputType.Pressed, args => {
-    macro.Dispose()
+    macro.Dispose();
 })
 ```
 
-MacroMat implements input handling for Windows, macOS, and Linux.
+MacroMat implements input handling for Windows, MacOS, and Linux.
