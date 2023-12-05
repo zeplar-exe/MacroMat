@@ -52,9 +52,20 @@ public sealed class Macro : IDisposable
         Listener.Start();
     }
 
+    ~Macro()
+    {
+        Dispose(true);
+    }
+
     /// <inheritdoc />
     public void Dispose()
     {
-        Listener.Dispose();
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+    
+    public void Dispose(bool disposing = true)
+    {
+        Listener.Dispose(disposing);
     }
 }

@@ -11,6 +11,7 @@ internal interface IKeyboardHook : IDisposable
     /// Keyboard event.
     /// </summary>
     public event KeyboardHookCallback? OnKeyEvent;
+    public void Dispose(bool disposing = true);
 }
 
 /// <summary>

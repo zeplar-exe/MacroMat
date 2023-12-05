@@ -189,7 +189,7 @@ internal class WindowsHook : IPlatformHook, IKeyboardHook, IMouseHook
         Dispose(false);
     }
     
-    protected virtual void Dispose(bool disposing)
+    public void Dispose(bool disposing)
     {
         if (disposing) // because we can unhook only in the same thread, not in garbage collector thread
         {

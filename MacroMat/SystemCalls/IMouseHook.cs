@@ -11,6 +11,7 @@ internal interface IMouseHook
     /// Mouse event.
     /// </summary>
     public event MouseHookCallback? OnMouseEvent;
+    public void Dispose(bool disposing = true);
 }
 
 /// <summary>

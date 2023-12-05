@@ -54,7 +54,15 @@ internal class MacroListener : IDisposable
 
     public void Dispose()
     {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    public void Dispose(bool disposing = true)
+    {
         MessageLoop?.Stop();
-        KeyboardHook?.Dispose();
+        MessageLoop?.Dispose(disposing);
+        KeyboardHook?.Dispose(disposing);
+        MouseHook?.Dispose(disposing);
     }
 }

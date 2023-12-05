@@ -27,6 +27,7 @@ internal static class InputKeyTranslator
     
     #region Windows
     
+    // Not Windows, it's Set-1 EN-US I think
     public static Scancode ToWindowsScancode(InputKey key)
     {
         return key switch

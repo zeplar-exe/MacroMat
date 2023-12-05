@@ -1,6 +1,6 @@
 ﻿namespace MacroMat.SystemCalls;
 
-internal abstract class MessageLoop
+internal abstract class MessageLoop : IDisposable
 {
     protected Action? InitialAction { get; }
     protected Queue<Action> RequestedActions { get; }
@@ -23,5 +23,15 @@ internal abstract class MessageLoop
     public virtual void Stop()
     {
         IsRunning = false;
+    }
+
+    public virtual void Dispose()
+    {
+        
+    }
+
+    public virtual void Dispose(bool disposing)
+    {
+        
     }
 }
