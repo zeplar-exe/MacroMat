@@ -2,7 +2,11 @@
   href: WhatIsMacroMat.md
 - name: Quick Start
   href: QuickStart.md
+- name: Virtual Keys and Scancodes
+  href: VirtualKeysScancodes.md
 - name: Keyboard & Mouse Callbacks
   href: KeyMouseCallbacks.md
+- name: Unicode
+  href: Unicode.md
 - name: Nuances
   href: Nuances.md

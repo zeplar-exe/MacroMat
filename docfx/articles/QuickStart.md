@@ -9,8 +9,8 @@ MacroMat is available as a [nuget package](example.com).
 ## Building Macros
 
 The `Macro` class provides an entry point for all macro operations. Individual 
-operations, `MacroInstruction`s, are executed independently by using 
-@MacroMat.Instructions.MacroInstruction.Execute
+operations, *MacroInstructions*, such as `SimulateKeyboardInstruction` are executed by using 
+@MacroMat.Instructions.MacroInstruction.Execute.
 
 ```cs
 using System;
@@ -19,13 +19,16 @@ using MacroMat.Instructions;
 
 var macro = new Macro();
 var pressA = KeyInputData.Press(VirtualKey.Of(InputKey.A));
-var simulateKeyboard = new SimulateKeyboardInstruction(pressA);
+var simulatePress = new SimulateKeyboardInstruction(pressA);
+var releaseA = KeyInputData.Release(VirtualKey.Of(InputKey.A));
+var simulateRelease = new SimulateKeyboardInstruction(releaseA);
 var wait = new WaitInstruction(TimeSpan.FromMilliseconds(1000));
 
-simulateKeyboard.Execute(macro);
+simulatePress.Execute(macro);
 wait.Execute(macro);
+simulateRelease.Execute(macro);
 
-macro.Dispose()
+macro.Dispose();
 ```
 
 The above example presses the A key for 1 second before disposing of the macro.
@@ -48,18 +51,18 @@ var macro = new Macro();
 
 macro.MoveMouse((400, 300))
      .Wait(1000)
-     .TapMouseButton()
+     .TapMouseButton(MouseButton.Left)
      .Wait(100)
      .TapKey(VirtualKey.Of(InputKey.A))
      .Wait(500)
      .Dispose();
 ```
 
-[The full list of extensions can be found here.](/api/MacroMat.Extensions.html)
+Here is the full [list of extensions can be found here.](/api/MacroMat.Extensions.html)
 
 ## Notes
 
-- It is vital that `Macro` instances are properly disposed of. Low level hooks 
+It is vital that `Macro` instances are properly disposed of. Low level hooks 
 can remain active after the application has closed. Hanging input hooks prevent 
 MacroMat from creating more hooks should the application be rerun. They can 
 also cause input lag, blue screens, or OS timeouts. Ensure that 
