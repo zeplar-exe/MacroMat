@@ -12,3 +12,4 @@ lag for the rest of the system. After ~3 seconds, the hook will be discarded
 entirely and a reset of the application is necessary. Instead, callbacks 
 should either run their code in another thread or otherwise keep execution 
 time to a minimum.
+      - This effect is also present when execution is paused due to debugging.
