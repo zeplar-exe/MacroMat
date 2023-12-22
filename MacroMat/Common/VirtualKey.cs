@@ -33,4 +33,6 @@ public partial struct VirtualKey : IKeyRepresentation
     {
         return keys.Select(InputKeyTranslator.CurrentPlatformVirtual).Cast<IKeyRepresentation>().ToArray();
     }
+
+    public static implicit operator VirtualKey(InputKey key) => Of(key);
 }

@@ -22,3 +22,7 @@ macos remap key: https://stackoverflow.com/questions/5785630/modify-nsevent-to-s
 ubuntu linux virtual keys: https://manpages.ubuntu.com/manpages/focal/man7/virkeycode-linux.7.html
 
 autokey (ahk for linux): https://autokey.github.io/index.html
+
+macos send unicode: https://stackoverflow.com/questions/10179995/how-to-simulate-a-unicode-char-key-press-in-mac-os-x-using-objective-c
+
+uinput for unicode, maybe: https://gist.github.com/paulo-raca/0e772864013b88de205a

@@ -22,3 +22,6 @@ DispatchMessage
 SendInput
 
 MapVirtualKeyEx
+
+GetKeyboardLayout
+GetKeyboardLayoutName

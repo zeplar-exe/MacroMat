@@ -32,24 +32,28 @@ not handled by MacroMat out of the box.
 ## Creating Virtual Keys and Scancodes
 
 Both @MacroMat.Common.VirtualKey and @MacroMat.Common.Scancode have 
-`Of` and `From` as static constructors (the latter as courtesy of 
+`From` constructors (courtesy of 
 [Vogen](https://github.com/SteveDunn/Vogen)).
 
 In both cases, `From` take a `short` which represents the virtual key code
 or scancode directly. This should only be used when working with keys that
 MacroMat does not support.
 
-On the other hand, `Of` takes a @MacroMat.Input.InputKey enum value and
-translates it to the corresponding `short` and passing it to `From` 
-internally. As such, usage would look like the following:
+On the other hand, `VirtualKey` has an `Of` static constructor which takes 
+a @MacroMat.Input.InputKey enum value, translates it to the corresponding 
+`short`, and passes it to `From`. As such, their respective usages look like 
+this:
 
 ```cs
 using MacroMat.Common;
 using MacroMat.Input;
 
 var aVirtual = VirtualKey.Of(InputKey.A);
-var aScan = Scancode.Of(InputKey.
+var aScan = Scancode.From(0x1E); // See https://kbdlayout.info/kbdus/overview+scancodes
 ```
 
 **Note that `VirtualKey.Of` bases its translation on the OS that the code is
-running on.** Different OS's have different virtual keys after all.
+running on.** Different OS's have different virtual keys, after all. Some 
+InputKeys will not be available on certain platforms, such as the windows key
+on any platform other than Windows. An ArgumentOutOfRangeException will be 
+raised if this is attempted.
