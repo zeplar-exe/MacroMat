@@ -18,7 +18,7 @@ using MacroMat.Extensions;
 var macro = new Macro();
 
 macro.TapUnicode("Press P to play poker.");
-macro.OnKey(InputKey.X, KeyInputType.Pressed, args => {
+macro.OnKey(InputKey.P, KeyInputType.Pressed, args => {
     PlayPoker();
 });
 ```
