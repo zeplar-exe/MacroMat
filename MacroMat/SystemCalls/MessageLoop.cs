@@ -2,36 +2,23 @@
 
 internal abstract class MessageLoop : IDisposable
 {
-    protected Action? InitialAction { get; }
-    protected Queue<Action> RequestedActions { get; }
+    protected Action<MessageLoop>? InitialAction { get; }
 
-    public bool IsRunning { get; protected set; }
-
-    protected MessageLoop(Action? initialAction)
+    protected MessageLoop(Action<MessageLoop>? initialAction)
     {
-        RequestedActions = new Queue<Action>();
         InitialAction = initialAction;
     }
 
     public abstract void Start(Action<Exception>? exceptionCallback = null);
 
-    public virtual void EnqueueAction(Action action)
+    public abstract void EnqueueAction(Action action);
+    public abstract void Stop();
+
+    public void Dispose()
     {
-        RequestedActions.Enqueue(action);
-    }
-    
-    public virtual void Stop()
-    {
-        IsRunning = false;
+        GC.SuppressFinalize(this);
+        Dispose(true);
     }
 
-    public virtual void Dispose()
-    {
-        
-    }
-
-    public virtual void Dispose(bool disposing)
-    {
-        
-    }
+    public abstract void Dispose(bool disposing);
 }

@@ -34,6 +34,9 @@
       <Compile Update="Instructions\SimulateMouseWheelInstruction.Windows.cs">
         <DependentUpon>SimulateMouseWheelInstruction.cs</DependentUpon>
       </Compile>
+      <Compile Update="Instructions\SimulateKeyboardInstruction.Linux.cs">
+        <DependentUpon>SimulateKeyboardInstruction.cs</DependentUpon>
+      </Compile>
     </ItemGroup>
 
 </Project>

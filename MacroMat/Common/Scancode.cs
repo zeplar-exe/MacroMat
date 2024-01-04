@@ -1,5 +1,4 @@
-﻿using MacroMat.Input;
-using Vogen;
+﻿using Vogen;
 
 namespace MacroMat.Common;
 

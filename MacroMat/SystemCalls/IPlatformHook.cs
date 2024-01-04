@@ -6,8 +6,8 @@
 internal interface IPlatformHook
 {
     /// <summary>
-    /// Initializes a message loop for the implemented platform/OS.
+    /// Method run when the corresponding platform's message loop begins.
     /// </summary>
-    /// <returns>Whether the message loop was successfully initialized.</returns>
-    public bool MessageLoopInit();
+    /// <returns>Whether initialization was successful.</returns>
+    public bool Init(MessageLoop loop);
 }

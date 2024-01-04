@@ -18,11 +18,6 @@ namespace MacroMat.SystemCalls.Windows;
 [SuppressMessage("Interoperability", "CA1416:Validate platform compatibility")]
 internal class WindowsHook : IPlatformHook, IKeyboardHook, IMouseHook
 {
-    // ReSharper disable once InconsistentNaming
-    public const int WH_KEYBOARD_LL = 13;
-    // ReSharper disable once InconsistentNaming
-    public const int WH_MOUSE_LL = 14;
-    
     private FreeLibrarySafeHandle User32LibraryHandle { get; set; }
     
     private List<(WINDOWS_HOOK_ID Id, HOOKPROC Proc)> Hooks { get; }
@@ -53,7 +48,7 @@ internal class WindowsHook : IPlatformHook, IKeyboardHook, IMouseHook
         }
     }
 
-    public bool MessageLoopInit()
+    public bool Init(MessageLoop loop)
     {
         if (Hooks.Count == 0)
             return false;
