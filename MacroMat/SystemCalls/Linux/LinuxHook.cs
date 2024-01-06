@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using MacroMat.Common;
+﻿using MacroMat.Common;
 using MacroMat.Input;
 
 namespace MacroMat.SystemCalls.Linux;
@@ -40,7 +39,7 @@ internal class LinuxHook : IPlatformHook, IKeyboardHook, IMouseHook
             else
             {
                 var data = new KeyboardEventData(
-                    Scancode.From(0), // I have no ideaFine  
+                    Scancode.From(0), // I have no idea 
                     VirtualKey.From((short)e.Code), 
                     e.State is LinuxKeyState.KeyDown or LinuxKeyState.KeyHold ? KeyInputType.KeyDown : KeyInputType.KeyUp, 
                     false, 

@@ -12,8 +12,8 @@ internal class LinuxMessageLoop : MessageLoop
 
     public delegate void RaiseMouseMove(LinuxMouseMoveEvent e);
     
-    public event RaiseKeyPress OnKeyPress;
-    public event RaiseMouseMove OnMouseMove;
+    public event RaiseKeyPress? OnKeyPress;
+    public event RaiseMouseMove? OnMouseMove;
     
     public bool IsRunning { get; private set; }
     

@@ -5,7 +5,7 @@ namespace MacroMat.SystemCalls;
 /// <summary>
 /// Interface for mouse hooks.
 /// </summary>
-internal interface IMouseHook
+internal interface IMouseHook : IDisposable
 {
     /// <summary>
     /// Mouse event.
