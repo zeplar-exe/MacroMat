@@ -7,6 +7,7 @@ public class Program
         return new AppRunner<Program>().Run(args);
     }
 
+    [DefaultCommand]
     [Command("run")]
     public int Run(string file)
     {
