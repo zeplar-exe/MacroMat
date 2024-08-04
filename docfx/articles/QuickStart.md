@@ -4,7 +4,7 @@ This article gives general guidance to set up MacroMat, create macros, and run t
 
 ## Installation
 
-MacroMat is available as a [nuget package](nuger.org/MacroMat).
+MacroMat is available as a [nuget package](https://www.nuget.org/MacroMat).
 
 ## Building Macros
 
