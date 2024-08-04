@@ -5,7 +5,7 @@
         {
           "src": "../MacroMat",
           "files": [
-            "bin/Release/**/*.dll"
+            "MacroMat.csproj"
           ]
         }
       ],
