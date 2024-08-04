@@ -1,0 +1,32 @@
+﻿<Window x:Class="MacroMat.TestSuite.UI.TestDisplay"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      mc:Ignorable="d"
+      Title="TestDisplay" Height="450" Width="800"
+      WindowState="Maximized" WindowStyle="None"
+      ResizeMode="NoResize">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="8*"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+        
+        <StackPanel Orientation="Horizontal" Grid.Row="0">
+            <Button Click="Close">X</Button>
+            <TextBlock Text="Test X of Y: TestName"></TextBlock>
+        </StackPanel>
+        
+        <Border Grid.Row="1" BorderBrush="Black" BorderThickness="0 1">
+            <ContentControl Name="v_ContentControl"/>
+        </Border>
+        
+        <StackPanel Orientation="Horizontal" Grid.Row="2">
+            <Button Click="Pass">Pass Icon</Button>
+            <Button Click="Fail">Fail Icon</Button>
+            <Button Click="Skip">Skip Icon</Button>
+        </StackPanel>
+    </Grid>
+</Window>

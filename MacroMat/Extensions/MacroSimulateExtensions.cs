@@ -137,6 +137,13 @@ public static class MacroSimulateExtensions
         
         return macro;
     }
+    
+    public static Macro MoveMouse(this Macro macro, (int X, int Y) position)
+    {
+        new SimulateMouseMoveInstruction(position).Execute(macro);
+        
+        return macro;
+    }
 
     public static Macro MoveMouse(this Macro macro, params (int X, int Y)[] positions)
     {
@@ -145,7 +152,14 @@ public static class MacroSimulateExtensions
         return macro;
     }
     
-    public static Macro MoveMouse(this Macro macro, Point[] positions)
+    public static Macro MoveMouse(this Macro macro, Point position)
+    {
+        new SimulateMouseMoveInstruction(new[] { position }).Execute(macro);
+        
+        return macro;
+    }
+    
+    public static Macro MoveMouse(this Macro macro, params Point[] positions)
     {
         new SimulateMouseMoveInstruction(positions).Execute(macro);
         

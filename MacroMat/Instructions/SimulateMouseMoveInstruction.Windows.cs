@@ -7,13 +7,24 @@ namespace MacroMat.Instructions;
 
 public partial class SimulateMouseMoveInstruction
 {
+    [DllImport("User32.dll",
+        EntryPoint = "GetSystemMetrics",
+        CallingConvention = CallingConvention.Winapi)]
+    internal static extern int GetSystemMetrics(int value);
+    
     private void WindowsImplementation(Macro macro)
     {
         var inputs = new INPUT[Positions.Length];
 
+        int screenWidth = GetSystemMetrics(0);
+        int screenHeight = GetSystemMetrics(1);
+
         for (var index = 0; index < Positions.Length; index++)
         {
             var position = Positions[index];
+            position.X = (int)Math.Round((double)position.X * 0xFFFF / screenWidth);
+            position.Y = (int)Math.Round((double)position.Y * 0xFFFF / screenHeight);
+            
             var input = new INPUT
             {
                 type = INPUT_TYPE.INPUT_MOUSE,
@@ -21,7 +32,7 @@ public partial class SimulateMouseMoveInstruction
                 {
                     mi = new MOUSEINPUT
                     {
-                        dwFlags = MOUSE_EVENT_FLAGS.MOUSEEVENTF_MOVE,
+                        dwFlags = MOUSE_EVENT_FLAGS.MOUSEEVENTF_MOVE | MOUSE_EVENT_FLAGS.MOUSEEVENTF_ABSOLUTE,
                         dx = position.X,
                         dy = position.Y,
                         time = 0
