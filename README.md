@@ -1,6 +1,6 @@
 # MacroMat
 
-MacroMat is a modern macro and hotkey creation language built with BakedEnv to expand upon AutoHotKey's syntax and features.
+MacroMat is a modern macro and hotkey creation library built with BakedEnv to expand upon AutoHotKey's syntax and features.
 
 Features.
 
@@ -9,6 +9,7 @@ Features.
 - Flexible and extensible design allows for easy integration with other languages and libraries.
 - [Planned] Cross-platform compatibility (Windows, macOS, and Linux).
     - I do not have access to a macOS or Linux device. Contributions form those who do would be appreciated.
+
 ## Getting Started & Documentation
 
 ### C# Library
@@ -62,4 +63,4 @@ macro.SimulateUnicode("Unicode, UTF-8, or is it UTF-16?")
      .SimulateInput(KeyInputData.FromKey(InputKey.Backspace, KeyInputType.KeyUp))
 ```
 
-See the [documentation](example.com) or the extended [Getting Started](example.com) guide.
+See the [documentation](https://zeplar-exe.github.io/MacroMat/) for in-depth information.

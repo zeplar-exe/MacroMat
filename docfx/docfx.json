@@ -29,6 +29,10 @@
           "toc.yml",
           "*.md",
           "index.md"
+        ],
+        "exclude": [
+          "README.md",
+          "**/README.md"
         ]
       }
     ],
