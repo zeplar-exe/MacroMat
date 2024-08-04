@@ -46,7 +46,9 @@
             Upon running the tests, this application will maximized 
             to fullscreen. DO NOT attempt to Alt+Tab, interact with 
             a different monitor, or otherwise interfere with the 
-            testing process.
+            testing process. Note that there is a 2 second delay before
+            each test begins. Follow all instructions listed for each
+            test.
         </TextBlock>
     </StackPanel>
 </Window>

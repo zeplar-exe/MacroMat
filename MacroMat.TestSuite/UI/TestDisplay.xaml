@@ -24,9 +24,9 @@
         </Border>
         
         <StackPanel Orientation="Horizontal" Grid.Row="2">
-            <Button Click="Pass">Pass Icon</Button>
-            <Button Click="Fail">Fail Icon</Button>
-            <Button Click="Skip">Skip Icon</Button>
+            <Button Click="Pass">Pass</Button>
+            <Button Click="Fail">Fail</Button>
+            <Button Click="Skip">Skip</Button>
         </StackPanel>
     </Grid>
 </Window>
