@@ -40,7 +40,6 @@ var hotkey = watcher.AddKeyCallback(hotkeyInput, () => {
 
 watcher.Dispose();
 macro.Dipose();
-```TEEEEEEEEEEEEEEST, also change initializatin to use an enum None | Key | Mouse | All
 
 Individual callbacks can be disposed of as well:
 

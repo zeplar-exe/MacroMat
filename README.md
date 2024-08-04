@@ -2,22 +2,20 @@
 
 MacroMat is a modern macro and hotkey creation language built with BakedEnv to expand upon AutoHotKey's syntax and features.
 
-*badge*
-
 Features.
 
 - Easy to use, intuitive syntax.
 - Built-in support for a variety of common operations such as mouse and keyboard input, window manipulation, and more.
 - Flexible and extensible design allows for easy integration with other languages and libraries.
 - [Planned] Cross-platform compatibility (Windows, macOS, and Linux).
-
+    - I do not have access to a macOS or Linux device. Contributions form those who do would be appreciated.
 ## Getting Started & Documentation
 
 ### C# Library
 
 #### Installation
 
-The C# library ~~is~~ will be available on [nuget](nuget.org).
+The C# library is be available on [nuget](nuget.org/MacroMat).
 
 #### Usage
 
@@ -65,7 +63,3 @@ macro.SimulateUnicode("Unicode, UTF-8, or is it UTF-16?")
 ```
 
 See the [documentation](example.com) or the extended [Getting Started](example.com) guide.
-
-## Contributing
-
-See [CONTRIBUTING.md](./CONTRIBUTING.md).

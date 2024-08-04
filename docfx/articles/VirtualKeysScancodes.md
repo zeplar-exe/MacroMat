@@ -6,7 +6,7 @@ When simulating inputs, it is necessary to choose between using a
 Virtual keys:
 
 - Are abstract
-- Are OS-dependent
+- Are OS and keyboard-dependent
 - Have a limited range of keys 
 
 On most systems, there only exists virtual keys for common keys on a QWERTY 

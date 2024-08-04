@@ -1,6 +1,6 @@
 # What is MacroMat?
 
-MacroMat is a cross-platform macro and automation library. At heart, it is made
+MacroMat is a ~~cross-platform~~ single-platform macro and automation library. At heart, it is made
 to achieve most tasks relating to input. For example:
 
 - Remapping keys
@@ -23,4 +23,4 @@ macro.OnKey(InputKey.P, KeyInputType.Pressed, args => {
 });
 ```
 
-MacroMat implements input handling for Windows, MacOS, and Linux.
+MacroMat implements input handling exclusively for Windows at the moment.

@@ -4,7 +4,7 @@ This article gives general guidance to set up MacroMat, create macros, and run t
 
 ## Installation
 
-MacroMat is available as a [nuget package](example.com).
+MacroMat is available as a [nuget package](nuger.org/MacroMat).
 
 ## Building Macros
 
@@ -58,7 +58,7 @@ macro.MoveMouse((400, 300))
      .Dispose();
 ```
 
-Here is the full [list of extensions can be found here.](/api/MacroMat.Extensions.html)
+The full [list of extensions can be found here.](/api/MacroMat.Extensions.html)
 
 ## Notes
 
