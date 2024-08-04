@@ -1,0 +1,54 @@
+﻿<Window x:Class="MacroMat.TestSuite.UI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MacroMat.TestSuite"
+        xmlns:core="clr-namespace:MacroMat.TestSuite.Core"
+        xmlns:ui="clr-namespace:MacroMat.TestSuite.UI"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800"
+        MinHeight="300" MinWidth="500"
+        ResizeMode="CanMinimize">
+    <StackPanel Orientation="Vertical">
+        <StackPanel>
+            <ScrollViewer MaxHeight="500">
+                <TreeView ItemsSource="{Binding DiscoveredTests}">
+                    <TreeView.Resources>
+                        <HierarchicalDataTemplate
+                            DataType="{x:Type ui:TestContainer}" 
+                            ItemsSource="{Binding Tests}">
+                            <StackPanel Orientation="Horizontal" ToolTip="{Binding FullName}">
+                                <CheckBox/>
+                                <TextBlock Text="{Binding Name}"/>
+                            </StackPanel>
+                        </HierarchicalDataTemplate>
+                        
+                        <DataTemplate DataType="{x:Type ui:TestInfo}">
+                            <StackPanel Orientation="Horizontal" ToolTip="{Binding FullName}">
+                                <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}"/>
+                                <TextBlock Text="{Binding Name}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </TreeView.Resources>
+                    <TreeView.ItemContainerStyle>
+                        <Style TargetType="{x:Type TreeViewItem}">
+                            <Setter Property="IsExpanded" Value="True" />
+                        </Style>
+                    </TreeView.ItemContainerStyle>
+                </TreeView>
+            </ScrollViewer>
+            <TextBlock Text="X tests selected."/>
+        </StackPanel>
+        
+        <Button Click="RunSelectedTests">Run Tests</Button>
+        <TextBlock TextWrapping="Wrap">
+            Upon running the tests, this application will maximized 
+            to fullscreen. DO NOT attempt to Alt+Tab, interact with 
+            a different monitor, or otherwise interfere with the 
+            testing process. Note that there is a 2 second delay before
+            each test begins. Follow all instructions listed for each
+            test.
+        </TextBlock>
+    </StackPanel>
+</Window>

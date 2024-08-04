@@ -1,20 +1,24 @@
 ﻿namespace MacroMat.SystemCalls;
 
-public abstract class MessageLoop
+internal abstract class MessageLoop : IDisposable
 {
-    protected Action? InitialAction { get; }
-    
-    public bool IsRunning { get; protected set; }
+    protected Action<MessageLoop>? InitialAction { get; }
 
-    protected MessageLoop(Action? initialAction)
+    protected MessageLoop(Action<MessageLoop>? initialAction)
     {
         InitialAction = initialAction;
     }
 
     public abstract void Start(Action<Exception>? exceptionCallback = null);
 
-    public virtual void Stop()
+    public abstract void EnqueueAction(Action action);
+    public abstract void Stop();
+
+    public void Dispose()
     {
-        IsRunning = false;
+        GC.SuppressFinalize(this);
+        Dispose(true);
     }
+
+    public abstract void Dispose(bool disposing);
 }

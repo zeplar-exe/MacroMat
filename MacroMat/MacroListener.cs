@@ -1,36 +1,35 @@
-﻿using System.Diagnostics;
-
-using MacroMat.Input;
+﻿using MacroMat.Common;
 using MacroMat.SystemCalls;
+using MacroMat.SystemCalls.Linux;
 using MacroMat.SystemCalls.Windows;
 
 namespace MacroMat;
 
-public sealed class MacroListener : IDisposable
+internal class MacroListener : IDisposable
 {
-    private IKeyboardHook? KeyboardHook { get; }
-    private MessageLoop? MessageLoop { get; }
+    private MessageReporter Reporter { get; }
 
-    public MacroListener()
+    internal IPlatformHook? PlatformHook { get; }
+    internal IKeyboardHook? KeyboardHook => PlatformHook as IKeyboardHook;
+    internal IMouseHook? MouseHook => PlatformHook as IMouseHook;
+    internal MessageLoop? MessageLoop { get; }
+
+    public MacroListener(MessageReporter reporter)
     {
-        KeyboardHook = GetKeyboardHook();
+        Reporter = reporter;
+        PlatformHook = GetPlatformHook();
         
-        MessageLoop = GetMessageLoop(() =>
+        MessageLoop = GetMessageLoop(loop =>
         {
-            if (KeyboardHook != null)
+            if (PlatformHook == null || !PlatformHook.Init(loop))
             {
-                KeyboardHook.MessageLoopInit();
-                KeyboardHook.OnKeyEvent += OnKey;
-            }
-            else
-            {
-                Console.WriteLine("Failed to initialize KeyboardHook, key events will not be fired.");
+                Reporter.Error("Failed to initialize platform hook, input events will not be fired.");
             }
         });
 
         if (MessageLoop == null)
         {
-            Console.WriteLine("Failed to initialize MessageLoop, no events will be fired..");
+            Reporter.Error("Failed to initialize message loop, input events will not be handled.");
         }
     }
 
@@ -39,60 +38,33 @@ public sealed class MacroListener : IDisposable
         MessageLoop?.Start(exception => throw exception);
     }
 
-    private static MessageLoop? GetMessageLoop(Action initialAction)
+    private static MessageLoop? GetMessageLoop(Action<MessageLoop> initialAction)
     {
-        switch (Environment.OSVersion.Platform)
-        {
-            case PlatformID.Win32NT:
-            {
-                return new WindowsLoop(initialAction);
-            }
-            case PlatformID.Unix:
-            {
-                return null;
-            }
-            case PlatformID.MacOSX:
-            {
-                return null;
-            }
-            default:
-            {
-                return null;
-            }
-        }
+        return new OsSelector<MessageLoop>()
+            .OnWindows(() => new WindowsLoop(initialAction))
+            .OnLinux(() => new LinuxMessageLoop(initialAction))
+            .Execute();
     }
 
-    private static IKeyboardHook? GetKeyboardHook()
+    private IPlatformHook? GetPlatformHook()
     {
-        switch (Environment.OSVersion.Platform)
-        {
-            case PlatformID.Win32NT:
-            {
-                return new WindowsHook();
-            }
-            case PlatformID.Unix:
-            {
-                return null;
-            }
-            case PlatformID.MacOSX:
-            {
-                return null;
-            }
-            default:
-            {
-                return null;
-            }
-        }
-    }
-
-    private void OnKey(IKeyboardHook hook, KeyboardEventData data)
-    {
-        Console.WriteLine(data);
+        return new OsSelector<IPlatformHook>()
+            .OnWindows(() => new WindowsHook(Reporter))
+            .OnLinux(() => new LinuxHook())
+            .Execute();
     }
 
     public void Dispose()
     {
-        MessageLoop.Stop();
-        KeyboardHook?.Dispose();
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    public void Dispose(bool disposing = true)
+    {
+        MessageLoop?.Stop();
+        MessageLoop?.Dispose(disposing);
+        KeyboardHook?.Dispose(disposing);
+        MouseHook?.Dispose(disposing);
     }
 }

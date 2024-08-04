@@ -1,152 +1,176 @@
-﻿using System.ComponentModel;
+﻿using System.Collections;
+using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
-
+using Windows.Win32;
+using Windows.Win32.Foundation;
+using Windows.Win32.UI.WindowsAndMessaging;
+using MacroMat.Common;
 using MacroMat.Input;
 
 namespace MacroMat.SystemCalls.Windows;
 
 // https://stackoverflow.com/questions/604410/global-keyboard-capture-in-c-sharp-application
-// Black magic in a nutshell.
+// Black magic in a nutshell
 
-//Based on https://gist.github.com/Stasonix
-internal class WindowsHook : IKeyboardHook
+//Based on https://gist.github.com/Stasonix (2 years ago (as of 2023) at least)
+[SuppressMessage("Interoperability", "CA1416:Validate platform compatibility")]
+internal class WindowsHook : IPlatformHook, IKeyboardHook, IMouseHook
 {
-    //const int HC_ACTION = 0;
+    private FreeLibrarySafeHandle User32LibraryHandle { get; set; }
     
-    [DllImport("kernel32.dll")]
-    private static extern IntPtr LoadLibrary(string lpFileName);
-
-    [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
-    private static extern bool FreeLibrary(IntPtr hModule);
-
-    /// <summary>
-    ///     The SetWindowsHookEx function installs an application-defined hook procedure into a hook chain.
-    ///     You would install a hook procedure to monitor the system for certain types of events. These events are
-    ///     associated either with a specific thread or with all threads in the same desktop as the calling thread.
-    /// </summary>
-    /// <param name="idHook">hook type</param>
-    /// <param name="lpfn">hook procedure</param>
-    /// <param name="hMod">handle to application instance</param>
-    /// <param name="dwThreadId">thread identifier</param>
-    /// <returns>If the function succeeds, the return value is the handle to the hook procedure.</returns>
-    [DllImport("USER32", SetLastError = true)]
-    private static extern IntPtr SetWindowsHookEx(int idHook, HookProc lpfn, IntPtr hMod, int dwThreadId);
-
-    /// <summary>
-    ///     The UnhookWindowsHookEx function removes a hook procedure installed in a hook chain by the SetWindowsHookEx
-    ///     function.
-    /// </summary>
-    /// <param name="hhk">handle to hook procedure</param>
-    /// <returns>If the function succeeds, the return value is true.</returns>
-    [DllImport("USER32", SetLastError = true)]
-    public static extern bool UnhookWindowsHookEx(IntPtr hHook);
-
-    /// <summary>
-    ///     The CallNextHookEx function passes the hook information to the next hook procedure in the current hook chain.
-    ///     A hook procedure can call this function either before or after processing the hook information.
-    /// </summary>
-    /// <param name="hHook">handle to current hook</param>
-    /// <param name="code">hook code passed to hook procedure</param>
-    /// <param name="wParam">value passed to hook procedure</param>
-    /// <param name="lParam">value passed to hook procedure</param>
-    /// <returns>If the function succeeds, the return value is true.</returns>
-    [DllImport("USER32", SetLastError = true)]
-    private static extern IntPtr CallNextHookEx(IntPtr hHook, int code, IntPtr wParam, IntPtr lParam);
+    private List<(WINDOWS_HOOK_ID Id, HOOKPROC Proc)> Hooks { get; }
+    private List<SafeHandle> HookHandles { get; }
     
-    private delegate IntPtr HookProc(int nCode, IntPtr wParam, IntPtr lParam);
-    
-    private const int KfAltdown = 0x2000;
-
-    public const int WH_KEYBOARD_LL = 13;
-
-    public const int VkSnapshot = 0x2c;
-    public const int VkLwin = 0x5b;
-    public const int VkRwin = 0x5c;
-    public const int VkTab = 0x09;
-    public const int VkEscape = 0x18;
-    public const int VkControl = 0x11;
-    
-    public const int LlkhfAltdown = KfAltdown >> 8;
-    
-    private HookProc? KeyboardHookRef { get; set; }
-    private IntPtr User32LibraryHandle { get; set; }
-    private IntPtr WindowsHookHandle { get; set; }
+    private MessageReporter Reporter { get; }
     
     public event KeyboardHookCallback? OnKeyEvent;
+    public event MouseHookCallback? OnMouseEvent;
 
-    public WindowsHook()
+    public WindowsHook(MessageReporter reporter)
     {
-        WindowsHookHandle = IntPtr.Zero;
-        User32LibraryHandle = IntPtr.Zero;
-        KeyboardHookRef = LowLevelKeyboardProc; 
-        // keep KeyboardHookRef alive, GC is not aware about SetWindowsHookEx behaviour.
-
-        User32LibraryHandle = LoadLibrary("User32");
-
-        if (User32LibraryHandle == IntPtr.Zero)
-        {
-            var exception = new Win32Exception(Marshal.GetLastWin32Error());
-            
-            throw new Win32Exception(exception.NativeErrorCode, 
-                $"Failed to load library 'User32.dll'. Error {exception.NativeErrorCode}: {exception.Message}.");
-        }
-    }
-
-    public void MessageLoopInit()
-    {
-        if (KeyboardHookRef == null)
-            return;
+        Hooks = new List<(WINDOWS_HOOK_ID Id, HOOKPROC Proc)>();
+        HookHandles = new List<SafeHandle>();
         
-        WindowsHookHandle = SetWindowsHookEx(WH_KEYBOARD_LL, KeyboardHookRef, User32LibraryHandle, 0);
+        Reporter = reporter;
 
-        if (WindowsHookHandle == IntPtr.Zero)
+        Hooks.Add((WINDOWS_HOOK_ID.WH_KEYBOARD_LL, LowLevelKeyboardProc));
+        Hooks.Add((WINDOWS_HOOK_ID.WH_MOUSE_LL, LowLevelMouseProc));
+        // keep KeyboardHookRef, MouseHookRef alive, GC is not aware about SetWindowsHookEx behaviour.
+
+        User32LibraryHandle = PInvoke.LoadLibrary("User32");
+
+        if (User32LibraryHandle.IsInvalid)
         {
-            var exception = new Win32Exception(Marshal.GetLastWin32Error());
-
-            throw new Win32Exception(exception.NativeErrorCode, 
-                $"Failed to adjust keyboard hooks for '{Process.GetCurrentProcess().ProcessName}'. Error {exception.NativeErrorCode}: {exception.Message}.");
+            WindowsHelper.HandleError(e => 
+                Reporter.Error($"Failed to load library 'User32.dll': [{e.NativeErrorCode}] {e.Message}."));
         }
     }
 
-    public IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam)
+    public bool Init(MessageLoop loop)
     {
-        var fEatKeyStroke = false;
-
-        var wparamTyped = wParam.ToInt32();
-
-        if (Enum.IsDefined(typeof(KeyboardState), wparamTyped))
+        if (Hooks.Count == 0)
+            return false;
+        
+        foreach (var hook in Hooks)
         {
-            var o = Marshal.PtrToStructure(lParam, typeof(WindowsKeyboardInputEvent));
-            var p = (WindowsKeyboardInputEvent)o;
+            var handle = PInvoke.SetWindowsHookEx(hook.Id, hook.Proc, null, 0);
 
-            var args = new GlobalKeyboardHookEventArgs(p, (KeyboardState)wparamTyped);
-            var keyboardData = args.KeyboardData;
-            var keyboardState = args.KeyboardState;
-            const int injectedBit = 4;
+            if (handle.IsInvalid)
+            {
+                WindowsHelper.HandleError(e =>
+                    Reporter.Log(
+                        $"Failed to adjust hook ({hook.Id}): " +
+                        $"[{e.NativeErrorCode}] {e.Message}."));
+            }
             
-            var isInjected = (keyboardData.Flags & (1 << injectedBit-1)) != 0;
+            HookHandles.Add(handle);
+        }
 
+        return true;
+    }
+
+    public LRESULT LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam)
+    {
+        var wParamTyped = wParam.Value.ToUInt32();
+
+        if (Enum.IsDefined(typeof(WindowsKeyboardState), wParamTyped))
+        {
+            var keyboardData = (KBDLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(KBDLLHOOKSTRUCT))!;
+            var keyboardState = (WindowsKeyboardState)wParamTyped;
+            
+            const int injectedBit = 4;
+
+            var flags = new BitArray(new[] { (byte)keyboardData.flags });
+            var isInjected = flags.Count > injectedBit && flags.Get(injectedBit);
+            
             var inputType = keyboardState switch
             {
-                KeyboardState.KeyDown => KeyInputType.KeyDown,
-                KeyboardState.KeyUp => KeyInputType.KeyUp,
-                KeyboardState.SysKeyDown => KeyInputType.SysKeyDown,
-                KeyboardState.SysKeyUp => KeyInputType.SysKeyUp,
+                WindowsKeyboardState.KeyDown or WindowsKeyboardState.SysKeyDown => KeyInputType.KeyDown,
+                WindowsKeyboardState.KeyUp or WindowsKeyboardState.SysKeyUp => KeyInputType.KeyUp,
                 _ => throw new ArgumentOutOfRangeException()
             };
             
             var eventData = new KeyboardEventData(
-                keyboardData.HardwareScanCode,
-                keyboardData.VirtualCode,
-                inputType, isInjected);
-            
-            OnKeyEvent?.Invoke(this, eventData);
+                Scancode.From((ushort)keyboardData.scanCode),
+                VirtualKey.From((byte)keyboardData.vkCode),
+                inputType, isInjected,
+                keyboardState is WindowsKeyboardState.SysKeyDown);
 
-            fEatKeyStroke = args.Handled;
+            var args = new KeyboardEventArgs(eventData);
+            
+            OnKeyEvent?.Invoke(this, args);
+            
+            return args.Handled ? 
+                new LRESULT(IntPtr.MaxValue) : 
+                PInvoke.CallNextHookEx(null, nCode, wParam, lParam);
         }
 
-        return fEatKeyStroke ? (IntPtr)1 : CallNextHookEx(IntPtr.Zero, nCode, wParam, lParam);
+        return PInvoke.CallNextHookEx(null, nCode, wParam, lParam);
+    }
+
+    public LRESULT LowLevelMouseProc(int nCode, WPARAM wParam, LPARAM lParam)
+    {
+        var wParamTyped = wParam.Value.ToUInt32();
+        
+        if (Enum.IsDefined(typeof(WindowsMouseState), wParamTyped))
+        {
+            var mouseData = (MSLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(MSLLHOOKSTRUCT))!;
+            var mouseState = (WindowsMouseState)wParamTyped;
+
+            var positionX = mouseData.pt.X; // supposed to use GET_X_LPARAM, cant generate that yet
+            var positionY = mouseData.pt.Y; // supposed to use GET_Y_LPARAM, cant generate that yet
+
+            MouseEventData eventData;
+            
+            if (mouseState == WindowsMouseState.MouseMove)
+            {
+                eventData = new MouseMoveEventData(positionX, positionY);
+            }
+            else if (mouseState == WindowsMouseState.MouseWheel)
+            {
+                // supposed to use GET_WHEEL_DELTA_WPARAM, cant generate that yet
+                var scrollDelta = (short)(wParam >> 16); // high order = delta
+                
+                eventData = new MouseWheelEventData(positionX, positionY, 0, scrollDelta);
+            }
+            else if (mouseState == WindowsMouseState.MouseHWheel)
+            {
+                var scrollDelta = (short)(wParam >> 16); // high order = delta
+                
+                eventData = new MouseWheelEventData(positionX, positionY, scrollDelta, 0);
+            }
+            else
+            {
+                var button = mouseState switch
+                {
+                    WindowsMouseState.LButtonDown => MouseButton.Left,
+                    WindowsMouseState.LButtonUp => MouseButton.Left,
+                    WindowsMouseState.RButtonDown => MouseButton.Right,
+                    WindowsMouseState.RButtonUp => MouseButton.Right
+                };
+
+                var buttonInputType = MouseButtonInputType.Down;
+
+                if (mouseState is WindowsMouseState.LButtonDown or WindowsMouseState.RButtonDown)
+                    buttonInputType = MouseButtonInputType.Down;
+                else if (mouseState is WindowsMouseState.LButtonUp or WindowsMouseState.RButtonUp)
+                    buttonInputType = MouseButtonInputType.Up;
+
+                eventData = new MouseButtonEventData(positionX, positionY, button, buttonInputType);
+            }
+
+            var args = new MouseEventArgs(eventData);
+            
+            OnMouseEvent?.Invoke(this, args);
+
+            return args.Handled ? 
+                new LRESULT(IntPtr.MaxValue) : 
+                PInvoke.CallNextHookEx(null, nCode, wParam, lParam);
+        }
+        
+        return PInvoke.CallNextHookEx(null, nCode, wParam, lParam);
     }
     
     public void Dispose()
@@ -160,37 +184,32 @@ internal class WindowsHook : IKeyboardHook
         Dispose(false);
     }
     
-    protected virtual void Dispose(bool disposing)
+    public void Dispose(bool disposing)
     {
         if (disposing) // because we can unhook only in the same thread, not in garbage collector thread
         {
-            if (WindowsHookHandle != IntPtr.Zero)
+            foreach (var handle in HookHandles.Where(handle => !handle.IsInvalid).Where(handle => !PInvoke.UnhookWindowsHookEx(new HHOOK(handle.DangerousGetHandle()))))
             {
-                if (!UnhookWindowsHookEx(WindowsHookHandle))
-                {
-                    var errorCode = Marshal.GetLastWin32Error();
-
-                    throw new Win32Exception(errorCode, $"Failed to remove keyboard hooks for '{Process.GetCurrentProcess().ProcessName}'. Error {errorCode}: {new Win32Exception(Marshal.GetLastWin32Error()).Message}.");
-                }
-
-                WindowsHookHandle = IntPtr.Zero;
-
-                // ReSharper disable once DelegateSubtraction
-                
-                KeyboardHookRef -= LowLevelKeyboardProc;
+                WindowsHelper.HandleError(e =>
+                    Reporter.Error(
+                        $"Failed to remove keyboard hooks for '{Process.GetCurrentProcess().ProcessName}': " +
+                        $"[{e.NativeErrorCode}] {e.Message}."));
             }
+            
+            HookHandles.Clear();
+            Hooks.Clear();
         }
 
-        if (User32LibraryHandle != IntPtr.Zero)
+        if (!User32LibraryHandle.IsInvalid)
         {
-            if (!FreeLibrary(User32LibraryHandle)) // reduces reference to library by 1.
+            if (!PInvoke.FreeLibrary(new HMODULE(User32LibraryHandle.DangerousGetHandle()))) // reduces reference to library by 1.
             {
-                var errorCode = Marshal.GetLastWin32Error();
+                var exception = new Win32Exception(Marshal.GetLastWin32Error());
 
-                throw new Win32Exception(errorCode, $"Failed to unload library 'User32.dll'. Error {errorCode}: {new Win32Exception(Marshal.GetLastWin32Error()).Message}.");
+                Reporter.Error($"Failed to unload library 'User32.dll': [{exception.NativeErrorCode}] {exception.Message}.");
             }
 
-            User32LibraryHandle = IntPtr.Zero;
+            User32LibraryHandle.Dispose();
         }
     }
 }

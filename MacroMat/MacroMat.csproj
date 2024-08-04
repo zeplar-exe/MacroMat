@@ -1,16 +1,42 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
 
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <DocumentationFile>bin\Release\MacroMat.xml</DocumentationFile>
+    </PropertyGroup>
+
     <ItemGroup>
-      <Content Include="..\.dockerignore">
-        <Link>.dockerignore</Link>
-      </Content>
+      <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.49-beta">
+        <PrivateAssets>all</PrivateAssets>
+      </PackageReference>
+      <PackageReference Include="Vogen" Version="3.0.21" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Instructions\SendUnicodeInstruction.Windows.cs">
+        <DependentUpon>SendUnicodeInstruction.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Instructions\SimulateKeyboardInstruction.Windows.cs">
+        <DependentUpon>SimulateKeyboardInstruction.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Instructions\SimulateMouseButtonInstruction.Windows.cs">
+        <DependentUpon>SimulateMouseButtonInstruction.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Instructions\SimulateMouseMoveInstruction.Windows.cs">
+        <DependentUpon>SimulateMouseMoveInstruction.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Instructions\SimulateMouseWheelInstruction.Windows.cs">
+        <DependentUpon>SimulateMouseWheelInstruction.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Instructions\SimulateKeyboardInstruction.Linux.cs">
+        <DependentUpon>SimulateKeyboardInstruction.cs</DependentUpon>
+      </Compile>
     </ItemGroup>
 
 </Project>
